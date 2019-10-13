@@ -1,0 +1,9 @@
+{ "items": [
+    	   {"nomaxe":"Pression (mbar)"},
+		   {"nomaxe":"Hauteur d'eau (cm)"},
+		   {"nomaxe":"Hauteur d'eau (m)"},
+		   {"nomaxe":"Température (°C)"},
+		   {"nomaxe":"Précipitation (mm)"},
+		   {"nomaxe":"Débit (L/s)"},
+		   {"nomaxe":"Débit (m3/s)"}
+]}
