@@ -9,13 +9,15 @@ Ext.define('SensusKarst.view.main.List', {
     controller: 'list',
    // title: 'Personnel',
     
+    bodyStyle : 'background-image:url("mesure.jpg");background-size:cover;background-repeat: no-repeat;background-position:center',
+    
     layout: 'column',
     items :[
     	 {
             height : (Ext.getBody().getHeight()-120),
             title: 'Controle de sonde Sensus',
 			border : 5,
-			margin : '10 0 0 0',
+			margin : '10 0 0 10',
 			frame: true,
             columnWidth: 1,
             layout: {
@@ -229,7 +231,7 @@ Ext.define('SensusKarst.view.main.List', {
 			    },
 			    height : (Ext.getBody().getHeight()-100),
 			    bodyPadding: 10,
-			
+			    bodyStyle : 'background-color:transparent;',
 			    defaults: {
 			        frame: true,
 			    },

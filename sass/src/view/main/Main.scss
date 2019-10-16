@@ -51,7 +51,7 @@
     $ui-header-icon-height: 24px,
     $ui-header-icon-width: 24px,
     $ui-header-icon-spacing: 15px,
-    $ui-header-background-color: $base-color,
+    $ui-header-background-color: #005f96,
     $ui-header-padding: 0,
     $ui-header-text-margin: 12px,
     $ui-header-noborder-adjust: false
@@ -82,4 +82,6 @@
     right: -24px;
 }
 
-
+.x-toolbar-default {
+    background-color: #6d6d6d;
+}

@@ -27,7 +27,6 @@ Ext.define('SensusKarst.view.main.Main', {
             },
             flex: 0
         },
-       // iconCls: 'fa-th-list'
     },
 
     tabBar: {
@@ -39,19 +38,10 @@ Ext.define('SensusKarst.view.main.Main', {
     },
     
     headerPosition: 'top',
-
-
-//    responsiveConfig: {
-//        tall: {
-//            headerPosition: 'top'
-//        },
-//        wide: {
-//            headerPosition: 'left'
-//        }
-//    },
+    
+    activeTab :1,
 
     defaults: {
-        bodyPadding: 10,
         tabConfig: {
         	
         	 iconAlign: 'top',
@@ -65,6 +55,9 @@ Ext.define('SensusKarst.view.main.Main', {
     	
     	 {
     	   title: 'Graphique',
+    	   bodyStyle: {
+			    	background: 'black',
+				},
     	   icon : 'icon/icon-chart32.png',
     	   items: [{
     	       xtype: 'graph2'
@@ -72,7 +65,9 @@ Ext.define('SensusKarst.view.main.Main', {
     	}, 
     	{
         title: 'Communication<br>Sensus Ultra',
-        //iconCls: 'x-fa fa-forumbee',
+        bodyStyle: {
+			    	background: 'black',
+				},
         icon : 'icon/sensus32.png',
         items: [{
             xtype: 'mainlist',
@@ -82,6 +77,9 @@ Ext.define('SensusKarst.view.main.Main', {
    
     {
         title: 'Paramètres',
+        bodyStyle: {
+			    	background: 'black',
+				},
         icon : 'icon/processus32.png',
         items: [{
             xtype: 'parametre',

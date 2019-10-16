@@ -11,6 +11,10 @@ Ext.define('SensusKarst.view.main.graph2', {
 			],
 
 			layout : 'fit',
+			
+			 bodyStyle: {
+			    	background: 'black',
+				},
 
 			tbar : {
 

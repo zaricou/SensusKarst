@@ -35,82 +35,100 @@ Ext.define('SensusKarst.view.main.MainController', {
     
     afterRender: function () {
     	var me = this;
+ 		 const { ipcRenderer } = require('electron');
+	     var fichier = ipcRenderer.sendSync('get-file');
+	     if( fichier != null ){
+		 var extension = fichier.split('.').reverse();
+	     }
+	     else {var extension = '';}
+ 		 if (extension[0]=='gsk'){
+ 		 	Ext.getCmp('main').setActiveTab(0);
+ 		 	Ext.getCmp('graph2').getController('graphcontrole').ouvrirgraphique(fichier);
+ 		 }
+ 		 else if (extension[0]=='ssk'){
+ 		 	Ext.getCmp('main').setActiveTab(0);
+ 		 	Ext.getCmp('graph2').getController('graphcontrole').ouvrefichierserie(fichier);
+ 		 }
+		 
+ 		else{ 
     	me.spash = Ext.create('Ext.window.Window', {    	
-	    height: 650,
-	    width: 975,
-	    header: false,
-        border: false,        
-        draggable: false,
-	    resizable : false,
-	    closable : false,
-	    modal : true,
-	    bodyStyle: 'background:url("pontet.jpg") no-repeat;',
-	    //layout: 'fit',
-	    items:[
-					
+			    height: 650,
+			    width: 975,
+			    header: false,
+		        border: false,        
+		        draggable: false,
+			    resizable : false,
+			    closable : false,
+			    modal : true,
+			    bodyStyle: 'background:url("pontet.jpg") no-repeat;',
+			    //layout: 'fit',
+			    items:[
+							
+								
+							{ 
+								bind: {
+								html : '<br><h1 align="center" style="font-size: 50px;">SensusKarst</h1><p align="center" style="font-size: 22px;">Version {version}</p>' +
+										'<br><p align="center">• Gestion et Communication avec les sondes de pression Sensus Ultra</p>' +
+										'<p align="center">• Graphique et traitement de séries de mesures temporelles </p>'
+								}
+								,height:310
+								,bodyStyle : 'align: center;color:white;font-size: 18px;font-weight: bold;background-color:transparent;'
+								
+							},	
+							{
+							    layout: {
+								        type: 'hbox',
+								        pack: 'center',
+								        align: 'center'
+								    },
+								 bodyStyle : 'align: center; background-color:transparent;',   
+							    items: [
+						                             {
+												   		xtype: 'button',
+												   		icon : 'icon/icon-chart32.png',
+												   		width : 100,
+												   		margin :'10 70',
+												   		flex : 1,
+												   		iconAlign: 'top',
+													    text:'Ouvrir un Graphique',
+													   	scale :'large',
+													   	 handler: function(){Ext.getCmp('main').setActiveTab(0);me.spash.close();} 
+												   	},
+												   	{
+												   		xtype: 'button',
+													   	  text:'Gestion des sondes Sensus Ultra',
+													   	  width : 100,
+													   	  margin :'10 70',
+													   	  scale :'large',
+													   	  flex : 1,
+													   	 iconAlign: 'top',
+													   	 icon : 'icon/sensus32.png',
+													   	  handler: function(){Ext.getCmp('main').setActiveTab(1);me.spash.close();} 
+												   	},
+										]
+							},
+							{
+												   		xtype: 'button',
+													   	  text:'Paramètres de SensusKarst',
+													   	  margin :'20 380',
+													   	  scale :'medium',
+													   	  flex : 1,
+													   	 iconAlign: 'top',
+													   	 icon : 'icon/processus16.png',
+													   	  handler: function(){Ext.getCmp('main').setActiveTab(2);me.spash.close();} 
+							},
+							{ 
+								html : '<br><p align="center"><br>Licence : GPL v3<br>Auteur : Eric Georges<br>http://gipek.fr </p>'
+								,bodyStyle : 'color:black;font-size: 14px;font-weight: bold;background-color:transparent;'
+								
+							},	
 						
-					{ 
-						bind: {
-						html : '<br><h1 align="center" style="font-size: 50px;">SensusKarst</h1><p align="center" style="font-size: 22px;">Version {version}</p>' +
-								'<br><p align="center">• Gestion et Communication avec les sondes de pression Sensus Ultra</p>' +
-								'<p align="center">• Graphique et traitement de séries de mesures temporelles </p>'
-						}
-						,height:310
-						,bodyStyle : 'align: center;color:white;font-size: 18px;font-weight: bold;background-color:transparent;'
-						
-					},	
-					{
-					    layout: {
-						        type: 'hbox',
-						        pack: 'center',
-						        align: 'center'
-						    },
-						 bodyStyle : 'align: center; background-color:transparent;',   
-					    items: [
-				                             {
-										   		xtype: 'button',
-										   		icon : 'icon/icon-chart32.png',
-										   		width : 100,
-										   		margin :'10 70',
-										   		flex : 1,
-										   		iconAlign: 'top',
-											    text:'Ouvrir un Graphique',
-											   	scale :'large',
-											   	 handler: function(){Ext.getCmp('main').setActiveTab(0);me.spash.close();} 
-										   	},
-										   	{
-										   		xtype: 'button',
-											   	  text:'Gestion des sondes Sensus Ultra',
-											   	  width : 100,
-											   	  margin :'10 70',
-											   	  scale :'large',
-											   	  flex : 1,
-											   	 iconAlign: 'top',
-											   	 icon : 'icon/sensus32.png',
-											   	  handler: function(){Ext.getCmp('main').setActiveTab(1);me.spash.close();} 
-										   	},
-								]
-					},
-					{
-										   		xtype: 'button',
-											   	  text:'Paramètres de SensusKarst',
-											   	  margin :'20 380',
-											   	  scale :'medium',
-											   	  flex : 1,
-											   	 iconAlign: 'top',
-											   	 icon : 'icon/processus16.png',
-											   	  handler: function(){Ext.getCmp('main').setActiveTab(2);me.spash.close();} 
-					},
-					{ 
-						html : '<br><p align="center"><br>Licence : GPL v3<br>Auteur : Eric Georges<br>http://gipek.fr </p>'
-						,bodyStyle : 'color:black;font-size: 14px;font-weight: bold;background-color:transparent;'
-						
-					},	
-				
-			   ]
-	    
-	    
-	}).show();
+					   ]
+			    
+			    
+			}).show();
+			
+ 		  }
     }
 
 });

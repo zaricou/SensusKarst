@@ -1,10 +1,31 @@
 const {app, BrowserWindow} = require('electron');
 
+const {ProgId, ShellOption, Regedit} = require('electron-regedit')
+
+
+
+new ProgId(
+	{
+    description: 'Fichier SensusKarst',
+    progExt : 'graphique',
+    extensions: ['gsk'],
+	}
+)
+
+new ProgId(
+	{
+    description: 'Série SensusKarst',
+    progExt : 'serie',
+    extensions: ['ssk'],
+	}
+)
+
 
 if (handleSquirrelEvent(app)) {
     // squirrel event handled and app will exit in 1000ms, so don't do anything else
     return;
 }
+
 
 
 
@@ -32,7 +53,6 @@ function createWindow () {
 				
 			if (process.env.NODE_ENV != "dev") startAutoUpdater(squirrelUrl)
 			
-			
 			  // Create the browser window.
 			  mainWindow = new BrowserWindow({
 				  width: 800,
@@ -46,7 +66,14 @@ function createWindow () {
 			  });
 			 
 			  mainWindow.maximize()
-			
+			  
+			  const { ipcMain } = require('electron')
+				ipcMain.on('get-file', function(event) {
+				  event.returnValue = process.argv[1];
+				});
+				
+				
+			  
 			  // and load the index.html of the app.
 			  mainWindow.loadURL(`file://${__dirname}/index.html`)
 			  mainWindow.once('ready-to-show', () => {
@@ -125,6 +152,7 @@ function handleSquirrelEvent(application) {
             // - Add your .exe to the PATH
             // - Write to the registry for things like file associations and
             //   explorer context menus
+        	Regedit.installAll();
 
             // Install desktop and start menu shortcuts
             spawnUpdate(['--createShortcut', exeName]);
@@ -135,6 +163,7 @@ function handleSquirrelEvent(application) {
         case '--squirrel-uninstall':
             // Undo anything you did in the --squirrel-install and
             // --squirrel-updated handlers
+        	Regedit.uninstallAll();
 
             // Remove desktop and start menu shortcuts
             spawnUpdate(['--removeShortcut', exeName]);

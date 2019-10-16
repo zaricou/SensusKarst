@@ -7,15 +7,14 @@ Ext.define('SensusKarst.view.main.parametre', {
     ],
     
     controller: 'parametrecontroller',
-   // title: 'Personnel',
-    
+    bodyStyle : 'background-image:url("crue.jpg");background-size:cover;background-repeat: no-repeat;background-position:center',
     layout: 'column',
+    height : (Ext.getBody().getHeight()-50),
     items :[
     	 {
-           // height : (Ext.getBody().getHeight()-100),
             title: 'Paramètres Sensus',
 			border : 5,
-			margin : '5 20 20 0',
+			margin : '20 20 20 20',
 			//frame: true,
             columnWidth: 0.5,
             bodyPadding: 10,
@@ -27,6 +26,7 @@ Ext.define('SensusKarst.view.main.parametre', {
 								        fieldLabel: 'Port Série',
 								        margin: '20 0 0 0',
 								        labelWidth : 130,
+								        bodyPadding: 10,
 								        layout: 'hbox',
 								        defaults: {
 								            hideLabel: true
@@ -185,7 +185,8 @@ Ext.define('SensusKarst.view.main.parametre', {
 			        pack: 'top',
 			        align: 'stretch'
 			    },
-			    height : (Ext.getBody().getHeight()-100),
+			    margin : '10 20 20 0',
+			    bodyStyle : 'background-color:transparent;',
 			    bodyPadding: 10,
  				items: [
  					{
@@ -197,7 +198,7 @@ Ext.define('SensusKarst.view.main.parametre', {
             			 html : '<p>SensusKarst est une application libre développée dans le cadre du GIPEK</p><p>http://gipek.fr</p><p>License : GPL v3</p><p>Version SensusKarst :  V{version}</p>'
             			 }
             		},
-            		{html :"<br>"},
+            		{html :"<br>",bodyStyle : 'background-color:transparent;',},
             		{
 					        title: 'Gestion Sauvegarde',
 					        layout : 'vbox',

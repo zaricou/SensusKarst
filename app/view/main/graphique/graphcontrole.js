@@ -161,33 +161,19 @@ Ext.define('SensusKarst.view.main.graphcontrole', {
 								 });					        		    
 		}
   }	
- },	
- 	
- ouvrefichier: function (a) {
- 	var obj = {};
- 	if(a.text=="Série SensusKarst"){
- 		obj= {name: 'Fichiers SensusKarst', extensions: ['ssk']}
- 	}
- 	
+ },
+ 
+ ouvrefichierserie: function(file){
  	var me = this;
- 	const remote = require('electron').remote;
- 	remote.dialog.showOpenDialog(remote.getCurrentWindow(), {
-				title: 'Ouvrir la serie',
-				properties : ['openFile'],
-				filters: [obj]
-				},(file) => {
-							  if (typeof file != 'undefined'){
-							  for(var i= 0; i < file.length; i++)
-									{
-									  var exten = file[i].split('.');
+ 									  var exten = file.split('.');
 									  var nomfich1 = exten[0].split('\\');
 									  var nomfich = nomfich1[nomfich1.length-1];
 									  if (exten[1]=='ppb'){
-									  	 me.gestionppb(file[i]);
+									  	 me.gestionppb(file);
 									    }
 									  else {
 									  var XLSX = require('xlsx');
-									  var workbook = XLSX.readFile(file[i], {type: "array",raw:true});
+									  var workbook = XLSX.readFile(file, {type: "array",raw:true});
 									  var i = 0;
 									  workbook.SheetNames.forEach(function (sheetName) {
 									  	    var colonne1 = workbook.Sheets[sheetName]['!ref'];
@@ -218,13 +204,13 @@ Ext.define('SensusKarst.view.main.graphcontrole', {
 											while (nbreserie>1){
 						   							formouvre.getComponent('serie'+nbreserie).destroy();
 						   							nbreserie=nbreserie-1;
-						    					}
+						    					}	
 						    				winouvre.getController().nbreserie=1;
 											Ext.define('model', {extend: 'Ext.data.Model',fields: colstore});
 											gridouvre.store.setModel(model);
 											gridouvre.store.loadData(donnees);
 											gridouvre.reconfigure(gridouvre.store,colgrid);
-											winouvre.setTitle("Ouvrir Fichier: "+file[i]); 
+											winouvre.setTitle("Ouvrir Fichier: "+file); 
 											gridouvre.setWidth (largueur);
 											formouvre.setWidth (largueur);
 											winouvre.center();
@@ -234,7 +220,25 @@ Ext.define('SensusKarst.view.main.graphcontrole', {
 											
 									  });
 									}
-									  
+ },
+ 	
+ ouvrefichier: function (a) {
+ 	var obj = {};
+ 	if(a.text=="Série SensusKarst"){
+ 		obj= {name: 'Fichiers SensusKarst', extensions: ['ssk']}
+ 	}
+ 	
+ 	var me = this;
+ 	const remote = require('electron').remote;
+ 	remote.dialog.showOpenDialog(remote.getCurrentWindow(), {
+				title: 'Ouvrir la serie',
+				properties : ['openFile'],
+				filters: [obj]
+				},(file) => {
+							  if (typeof file != 'undefined'){
+							  for(var i= 0; i < file.length; i++)
+									{
+									  me.ouvrefichierserie(file[i]);
 									}	
 							}
 	 });
@@ -264,18 +268,10 @@ Ext.define('SensusKarst.view.main.graphcontrole', {
   else{this.ouvrir();}
  },
  
- ouvrir: function (){
- 	
-			 	const remote = require('electron').remote;
-				remote.dialog.showOpenDialog(remote.getCurrentWindow(), {
-							title: 'Ouvrir un graphique',
-							//defaultPath : 'D:\\testsensus',
-							properties : ['openFile'],
-							filters: [{name: 'Graphique SensusKarst', extensions: ['gsk']}]
-							},(file) => {
-										if (typeof file != 'undefined' ){
-											const fs = require('fs');			 
-											fs.readFile(file[0],'utf8', function(err, contents) {
+ 
+ ouvrirgraphique : function (file){
+ 											const fs = require('fs');			 
+											fs.readFile(file,'utf8', function(err, contents) {
 															var fich=contents.split('\n');
 															chartd.setTitle({ text: fich[0]});
 															var seriex =[];
@@ -341,8 +337,21 @@ Ext.define('SensusKarst.view.main.graphcontrole', {
 																	}
 																
 															}
-														 });		 
-												
+														 });	
+ 	
+ },
+ 
+ ouvrir: function (){
+ 	var me = this;
+			 	const remote = require('electron').remote;
+				remote.dialog.showOpenDialog(remote.getCurrentWindow(), {
+							title: 'Ouvrir un graphique',
+							//defaultPath : 'D:\\testsensus',
+							properties : ['openFile'],
+							filters: [{name: 'Graphique SensusKarst', extensions: ['gsk']}]
+							},(file) => {
+										if (typeof file != 'undefined' ){
+											me.ouvrirgraphique(file[0]);	 
 										}
 									});
 					
