@@ -1002,6 +1002,9 @@ Ext.define('SensusKarst.view.main.ListController', {
 					 const app = remote.app;
 					 const testFolder = app.getPath('userData')+"/data/";
 					 const fs = require('fs');
+					 if (!fs.existsSync(testFolder)){
+						    fs.mkdirSync(testFolder);
+						}
 					 var tab = [];
 					 fs.readdir(testFolder, (err, files) => {
 					   files.forEach(file => {

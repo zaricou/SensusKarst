@@ -7,16 +7,7 @@ const {ProgId, ShellOption, Regedit} = require('electron-regedit')
 new ProgId(
 	{
     description: 'Fichier SensusKarst',
-    progExt : 'graphique',
-    extensions: ['gsk'],
-	}
-)
-
-new ProgId(
-	{
-    description: 'Série SensusKarst',
-    progExt : 'serie',
-    extensions: ['ssk'],
+    extensions: ['gsk','ssk'],
 	}
 )
 

@@ -233,11 +233,16 @@ Ext.define('SensusKarst.view.main.parametre', {
 	        text: 'Réinitiallisation Paramètres',
 	        handler: 'onquit'
 	    },
-   		 { xtype: 'tbspacer', width: 50 },
+	    { xtype: 'tbspacer', width: 50 },
         {
-        text: 'Quitter',
+        text: 'Relancer SensusKarst',
         handler: 'onquit'
-    },
+    	},
+   		{ xtype: 'tbspacer', width: 50 },
+        {
+        text: 'Quitter SensusKarst',
+        handler: 'onquit'
+    	},
 
     ],
 

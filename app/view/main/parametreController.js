@@ -342,7 +342,7 @@ Ext.define('SensusKarst.view.main.parametreController', {
     onquit : function (butt) {
     		const remote = require('electron').remote;
 			var w = remote.getCurrentWindow();
-			if (butt.text == 'Quitter'){
+			if (butt.text == 'Quitter SensusKarst'){
 				var message = "Confirmer la fermeture de SensusKarst ?";
 				var choix = 1;
 			}
@@ -350,15 +350,20 @@ Ext.define('SensusKarst.view.main.parametreController', {
 				var message = "Confirmer la réinitiallisation des paramètres";
 				var choix = 2;
 			}
-			 Ext.Msg.confirm("Confirmation",message, function(btnText){
+			else if (butt.text == 'Relancer SensusKarst'){
+				var message = "Confirmer le redémarrage de Sensuskarst ?";
+				var choix = 3;
+			}			
+			Ext.Msg.confirm("Confirmation",message, function(btnText){
 		                if(btnText === "yes"){
 		                   if (choix == 1){w.close();}
-		                   else {
+		                   else if (choix == 2) {
 		                   		const Store = require('electron-store');
 								const store = new Store();
 								store.delete("parametre");
 		                   		w.reload();
 		                   		}
+		                   else if (choix == 3) {w.reload();}		
 		                }
 		            }, this);
     },

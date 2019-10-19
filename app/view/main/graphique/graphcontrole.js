@@ -27,26 +27,34 @@ Ext.define('SensusKarst.view.main.graphcontrole', {
  
  quitter: function (butt) {
 	 const remote = require('electron').remote;
-	 var w = remote.getCurrentWindow();
-	if (butt.text == 'Quitter'){
-		var message = "Confirmer la fermeture de SensusKarst ?";
-		var choix = 1;
-	}
-	else if (butt.text == 'Fermer Graphique'){
-		var message = "Confirmer la fermeture du Graphique ?";
-		var choix = 2;
-	}
-	 Ext.Msg.confirm("Confirmation",message, function(btnText){
+	 var w = remote.getCurrentWindow();	
+	 Ext.Msg.confirm("Confirmation","Confirmer la fermeture de SensusKarst ?", function(btnText){
                 if(btnText === "yes"){
-                   if (choix == 1){w.close();}
-                   else {w.reload();}
+                   w.close();
                 }
             }, this);
-
-	 
-	
-  
  },
+ 
+  fermer: function(){
+  if(chartd.series.length>0){ 	
+ 	Ext.Msg.confirm("Confirmation","Confirmer la fermeture du Graphique !", function(btnText){
+           if(btnText === "yes"){ 
+				for(var i = chartd.series.length - 1; i > -1; i--) {
+				    if(chartd.series[i].name.toLowerCase() != 'navigator') {
+				       chartd.series[i].remove(false);
+				    }
+				}
+				for(var i = chartd.axes.length - 1; i >-1; i--) {
+				    if(chartd.axes[i].coll == 'yAxis' && chartd.axes[i].userOptions.id!= "navigator-y-axis") {
+				        chartd.axes[i].remove(false);
+				    } 
+				}
+				chartd.redraw(false)
+ 			  }
+            }, this);	          	
+  }
+ },
+ 
     
  listfichierbrut: function () {
  	 const remote = require('electron').remote; 
@@ -568,7 +576,42 @@ Ext.define('SensusKarst.view.main.graphcontrole', {
 								        	}
 				    	}
 				    	,
-				    	 {
+				    	{
+							text : 'Modifier Axe',
+							handler : function () {
+									 var idaxe = serie.yAxis.userOptions.id;
+									 Ext.MessageBox.show({
+								         title: 'Axe de '+serie.name,
+								         msg: 'Modifier l\'axe : ',
+								         width:400,
+								         buttons: Ext.MessageBox.OKCANCEL,
+								         prompt : true,
+								         value:idaxe ,
+								         closable: false,
+								         fn: function(btn,txtinfo) {
+								         	if(btn=='ok'){
+								        	 if(txtinfo || txtinfo!=' '|| txtinfo!='  '){
+								        	  	if (!chartd.get(txtinfo)){
+														 chartd.addAxis({
+													        id: txtinfo,
+													        title: {text: txtinfo},
+													        scrollbar: {
+													             enabled: true,
+													             showFull: false
+													         },
+													    });
+												 	}
+												serie.update({yAxis: txtinfo}); 
+												if(chartd.get(idaxe).series.length==0){chartd.get(idaxe).remove();} 	
+								         	}
+								         	
+								           }
+								         }
+								     });
+							}
+							
+						},
+				    	{
 							text : 'Tronquer Séries',
 							handler : function () {thiss.tronque(serie)}
 							
@@ -1129,6 +1172,11 @@ Ext.define('SensusKarst.view.main.graphcontrole', {
 					            	}, this);
 					            	
 							         if(debut!='' && fin!='' && serietronq.length > 0){
+							        		if(debut > fin){
+							        			Ext.MessageBox.alert('Problème !', 'la date de début est postérieur à la date de fin', this.showResult, this);
+							        		}
+							        		else {
+							         	
 					            					Ext.Msg.confirm("Confirmation",
 							            					"Etes-vous sûr de vouloir tronquer les séries ?",
 							            					function(id) {
@@ -1148,6 +1196,7 @@ Ext.define('SensusKarst.view.main.graphcontrole', {
 												            		thiss.wintronque.destroy(); 
 							            						}
 							            					});
+							        		}				
 							         }
 					            	
 					            }

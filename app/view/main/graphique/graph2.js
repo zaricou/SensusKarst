@@ -30,7 +30,7 @@ Ext.define('SensusKarst.view.main.graph2', {
 									handler : 'enregistrer'
 								}, {
 									text : 'Fermer Graphique',
-									handler : 'quitter'
+									handler : 'fermer'
 								},{
 									text : 'Quitter',
 									handler : 'quitter'
