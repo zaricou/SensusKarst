@@ -1499,6 +1499,8 @@ require('highcharts/modules/offline-exporting')(Highcharts);
 require('highcharts/modules/export-data')(Highcharts);
 HighchartsCustomEvents = require('highcharts-custom-events')(Highcharts);
 require('highcharts/modules/boost')(Highcharts);
+require('highcharts/modules/no-data-to-display')(Highcharts);
+
 
 Highcharts.setOptions({
 	
@@ -1511,7 +1513,7 @@ Highcharts.setOptions({
 		shortMonths: ['Jan', 'Fev', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'],
 		decimalPoint: ',',
 		thousandsSep: '',
-		noData: 'Pas d\'information à afficher',
+		noData: 'Pas de série de mesures chargée',
    },
    colors: ["#0000FF", "#FF0000", "#00FF00", "#000000", "#00FFFF", "#FF00FF", "#008000", "#FFA500", "#808080", "#800000","#4B0082","#FFC0CB","#ADD8E6","#808000"],
    yAxis : {

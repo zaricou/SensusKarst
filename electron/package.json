@@ -1,6 +1,6 @@
 {
   "name": "SensusKarst",
-  "version": "1.3.2",
+  "version": "1.3.6",
   "description": "Gestion des sondes Sensus Ultra et traitement des séries temporelles",
   "main": "./app/main.js",
   "scripts": {

@@ -359,11 +359,11 @@ Ext.define('SensusKarst.view.main.ListController', {
 					tempbase = tempsordi - tempssensus;
 					var dateservice = Ext.Date.parse(tempbase, 'U');
 					dateservice = Ext.Date.format(dateservice,' F Y');
-					var annee = parseInt(tempssensus/31536000);					
+					var annee = parseInt(tempssensus/31536000);
 					var mois = parseInt((tempssensus%31536000)/2628000);
-					var dureesensus;
-					if (annee>0){dureesensus = annee+" ans "}
-					if (mois>0){dureesensus = dureesensus+mois+" mois"}
+					var dureesensus = '';
+					if (annee>0){dureesensus = annee.toString()+" ans "}
+					if (mois>0){dureesensus = dureesensus+mois.toString()+" mois"}
 					var serie = data.readUInt16LE(2);
 					var changserie = 0;
 					if(val.verifserie==1 && serie!=val.serieold){

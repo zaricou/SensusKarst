@@ -69,8 +69,32 @@ Ext.define('SensusKarst.view.main.graphique.ouvrefichierform', {
         {
          xtype: 'button',
          text : 'Format complexe',
-         margin : '20 30 40 5',
+         margin : '10 30 10 5',
 		 handler : 'complexe',
+        },
+         {
+            xtype: 'combobox',
+            fieldLabel: 'Zone horaire ',
+            allowBlank:false,
+            name: 'zone',
+            width : 170,
+            store: {
+            	type: 'array',
+                fields: [ 'format','zone' ],
+                data: [
+                    ['Heure Local (ordi)','local'],
+                    ['Temps universel (UTC)',' +00:00'],
+                    ['Heure d\'hiver (CET)',' +01:00'],
+                    ['Heure d\'été (CEST)',' +02:00'],
+                    ['UTC - 8h',' -08:00'],
+                ]
+            },
+            valueField: 'zone',
+            value: 'local',
+            forceSelection : true,
+			allowBlank: false,
+            displayField: 'format',
+            typeAhead: true,
         },
         {
 		 xtype: 'textfield',
@@ -134,7 +158,7 @@ Ext.define('SensusKarst.view.main.graphique.ouvrefichierform', {
         hideLabel: true,
         emptyText: 'Commentaires...',
         name: 'commen',
-        height:100,
+        height:115,
        
     }
         ]

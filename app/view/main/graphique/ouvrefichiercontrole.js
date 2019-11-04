@@ -32,10 +32,11 @@ Ext.define('SensusKarst.view.main.graphique.ouvrefichiercontrole', {
     typefichier : function (nomfich) {
         
         var store = this.view.getComponent('grid').getStore();
+        var form = this.view.getComponent('form').getForm();
         var type = "";
         if (store.getAt(1-1).get('A')=="sensuskarst"){
             type = "Série SensuKarst";
-                        this.view.getComponent('form').getForm().setValues({
+            form.setValues({
                                                             xtime: "A",
                                                             ytime : 4,
                                                             format : "timestamp",
@@ -52,7 +53,66 @@ Ext.define('SensusKarst.view.main.graphique.ouvrefichiercontrole', {
         }
         else if (store.getAt(1-1).get('B').substr(0,3)=="SU-"){
             type = "Export Sensus Manager";
-            this.view.getComponent('form').getForm().setValues({
+            var me=this
+             var i = store.getCount()-1;
+             if (Number(store.getAt(i).get('H'))<10){var minute = "0"+store.getAt(i).get('H');}
+             else {var minute = store.getAt(i).get('H');}
+             if (Number(store.getAt(i).get('I'))<10){var seconde = "0"+store.getAt(i).get('I');}
+             else {var seconde = store.getAt(i).get('I');}
+             var datefin = store.getAt(i).get('D')+store.getAt(i).get('E')+store.getAt(i).get('F')+store.getAt(i).get('G')+minute+seconde;
+             datep = Ext.Date.parse(datefin, 'YnjGis');
+             datep =datep.getTime();
+             date2 = Math.round(store.getAt(i).get('J'))*1000;
+             date = datep + date2;
+             date = Ext.Date.parse(date, 'time');
+             var ecart =  date.getTimezoneOffset()/60;
+             var typeheure = 'local'; 
+             if (ecart == -2){typeheure = ' +02:00';}
+             else if (ecart == -1){typeheure = ' +01:00';}
+             else if (ecart == 0){typeheure = ' +00:00';}        
+             me.formexportsensus = Ext.create('Ext.form.Panel', {
+									          bodyPadding: 10,
+  											  layout: 'form',
+											  width: 450,
+										            items: [
+										            {
+												        html: 'Par défault, le type d\'heure probable calculé à partir de la date de la dernière mesure de la série '
+										            },
+										            {
+											            xtype: 'combobox',
+											            fieldLabel: 'Type d\'heure lors de la récupération',
+											            allowBlank:false,
+											            name: 'zone',
+											            //width : 170,
+											            store: {
+											            	type: 'array',
+											                fields: [ 'format','zone' ],
+											                data: [
+											                    ['Heure d\'hiver',' +01:00'],
+											                    ['Heure d\'été',' +02:00'],
+											                    ['Temps universel (UTC)',' +00:00'],
+											                    ['Autre Heure local','local'],
+											                ]
+											            },
+											            valueField: 'zone',
+											            value: typeheure,
+											            forceSelection : true,
+														allowBlank: false,
+											            displayField: 'format',
+											            typeAhead: true,
+											        }
+										           ],
+									        buttons: [
+									        {
+									            text: 'Valider',
+									            disabled: true,
+        										formBind: true,
+									            handler: function(){
+									            		var config = me.formexportsensus.getForm().getValues();
+									            		me.formexportsensus.destroy(); 
+														me.winexportsensus.destroy();
+														
+														form.setValues({
                                                             xtime: "D",
                                                             ytime : 1,
                                                             format : "complexe",
@@ -63,10 +123,11 @@ Ext.define('SensusKarst.view.main.graphique.ouvrefichiercontrole', {
                                                             colonne:"K",
                                                             titre:nomfich+" - Pression",
                                                             commen:"Pression - Sensus "+store.getAt(1-1).get('B'),
-                                                            axe:"Pression (mbar)"
+                                                            axe:"Pression (mbar)",
+                                                            zone:config.zone 
                                                             })
-            this.valide(type,"");   
-            this.view.getComponent('form').getForm().setValues({
+											            me.valide(type,"");   
+											            form.setValues({
                                                             xtime: "D",
                                                             ytime : 1,
                                                             format : "complexe",
@@ -77,14 +138,28 @@ Ext.define('SensusKarst.view.main.graphique.ouvrefichiercontrole', {
                                                             colonne:"complexe",
                                                             titre:nomfich+" - Température",
                                                             commen:"Température - Sensus"+store.getAt(1-1).get('B'),
-                                                            axe:"Température (°C)"
+                                                            axe:"Température (°C)",
+                                                            zone:config.zone 
                                                             })
-            this.valide(type,"");
+											            me.valide(type,"");
+														
+														
+									            }
+									        }]
+									        
+									    });
+				me.winexportsensus = Ext.create('Ext.window.Window', {
+									        title: 'Valider le type d\'heure lors de la récupération avec Sensus Manager',
+									        closable : false,
+									        layout: 'fit',
+									        modal: true,
+									        items: me.formexportsensus,
+									      }).show();
         }
         
         else if (store.getAt(2-1).get('B')=="EXP-HYDRO"){
             type = "Export Banque Hydro DREAL";
-            this.view.getComponent('form').getForm().setValues({
+            form.setValues({
                                                             xtime: "D",
                                                             ytime : 5,
                                                             format : "complexe",
@@ -95,14 +170,15 @@ Ext.define('SensusKarst.view.main.graphique.ouvrefichiercontrole', {
                                                             colonne:"F",
                                                             titre:store.getAt(3-1).get('C'),
                                                             commen:store.getAt(2-1).get('C')+" "+store.getAt(3-1).get('H')+" - Station : "+store.getAt(3-1).get('B')+" ("+store.getAt(3-1).get('C')+")",
-                                                            axe:"Débit ("+store.getAt(4-1).get('L')+")"
+                                                            axe:"Débit ("+store.getAt(4-1).get('L')+")",
+                                                            zone:' +00:00'
                                                             })
             this.valide(type,""); 
         }
         
         else if (store.getAt(1-1).get('C')=="PMAC ID:" && store.getAt(4-1).get('A')<2){
             type = "Export Metrolog";
-            this.view.getComponent('form').getForm().setValues({
+            form.setValues({
                                                             xtime: "A",
                                                             ytime : 4,
                                                             format : "complexe",
@@ -364,6 +440,13 @@ Ext.define('SensusKarst.view.main.graphique.ouvrefichiercontrole', {
                             var datenbrecolonne = 0 ;
                             var dateajoutcolonne = 0; 
                             var dateformat = '';
+                            var zone = parametres.zone;
+                            var formatzone = ' P';
+                            var zoneexcel = parseFloat(zone)*3600
+                            if (parametres.zone == 'local'){
+                            	zone = '';
+                            	formatzone = '';
+                            }
                             // gestion format complexe
                             if (parametres.format == 'complexe'){
                                 datecomplexe = 1;
@@ -395,12 +478,19 @@ Ext.define('SensusKarst.view.main.graphique.ouvrefichiercontrole', {
                                     if (parametres.fixextime != ''){
                                     	var fixecellule = store.getAt(parametres.fixeytime-1).get(parametres.fixextime);
                                         if(parametres.fixeformat == 'date excel') {
-		                                	fixecellule = (fixecellule - 25569) * 86400
-		                                	datedepart = Ext.Date.parse(fixecellule, 'timestamp');
-                                    		datedepart = Ext.Date.utcToLocal(datedepart);
+		                                	fixecellule = (fixecellule - 25569) * 86400;
+                                    		if (isNaN(zoneexcel)){
+		                                		datedepart = Ext.Date.parse(fixecellule, 'timestamp');
+		                                    	datedepart = Ext.Date.utcToLocal(datedepart)
+		                                	}
+		                                	else {
+		                                		fixecellule = fixecellule-zoneexcel;
+		                                		datedepart = Ext.Date.parse(fixecellule, 'timestamp');
+		                                	}
                                         }    
                                         else {
-                                        	datedepart = Ext.Date.parse(fixecellule, parametres.fixeformat);
+                                        	fixecellule = fixecellule+zone;
+                                   		    datedepart = Ext.Date.parse(fixecellule, parametres.fixeformat+formatzone);
                                         }
                                                                                 
                                         datedepart = datedepart.getTime();
@@ -438,8 +528,7 @@ Ext.define('SensusKarst.view.main.graphique.ouvrefichiercontrole', {
                                              j++;
                                              lettre = listlettre.substring(j,j+1);
                                         }
-                                        
-                                        datep = Ext.Date.parse(date1, dateformat);
+                                        datep = Ext.Date.parse(date1+zone, dateformat+formatzone);
                                         if (!!datep){
                                             datep =datep.getTime();
                                         }
@@ -461,15 +550,22 @@ Ext.define('SensusKarst.view.main.graphique.ouvrefichiercontrole', {
                                     if (!date){datenull = 1;}
                                 }
                                 else if(parametres.format == 'date excel') {
-                                	var cellule = store.getAt(i).get(parametres.xtime);
+                                	var cellule = store.getAt(i).get(parametres.xtime);                                	
                                 	cellule = (cellule - 25569) * 86400
-                                    date = Ext.Date.parse(cellule, 'timestamp');
-                                    date = Ext.Date.utcToLocal(date)
+                                	if (isNaN(zoneexcel)){
+                                		date = Ext.Date.parse(cellule, 'timestamp');
+                                    	date = Ext.Date.utcToLocal(date)
+                                	}
+                                	else {
+                                		cellule = cellule-zoneexcel;
+                                		date = Ext.Date.parse(cellule, 'timestamp');
+                                	}
+                                    
                                     if (!date){datenull = 1;}
                                 }
                                 else {
-                                    var cellule = store.getAt(i).get(parametres.xtime);
-                                    date = Ext.Date.parse(cellule, parametres.format);
+                                    var cellule = store.getAt(i).get(parametres.xtime)+zone;
+                                    date = Ext.Date.parse(cellule, parametres.format+formatzone);
                                     if (!date){datenull = 1;}
                                 }
                                 if (datenull == 0){
@@ -531,7 +627,8 @@ Ext.define('SensusKarst.view.main.graphique.ouvrefichiercontrole', {
 				        	      }).show();
 				        	}
 				        	else{
-					        	var duree = (data[nbrepoints-1][0]-data[0][0])/1000;
+				        		data.sort();
+				        		var duree = (data[nbrepoints-1][0]-data[0][0])/1000;
 					        	var xmini = Ext.Date.format(Ext.Date.parse(data[0][0]/1000, 'U'),'d/m/Y H:i:s');
 					        	var xmaxi = Ext.Date.format(Ext.Date.parse(data[nbrepoints-1][0]/1000, 'U'),'d/m/Y H:i:s');
 					        	var intervalle =(data[1][0]-data[0][0])/1000;
