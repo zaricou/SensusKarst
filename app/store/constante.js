@@ -23,6 +23,6 @@ Ext.define('val', {
 			profdeb: '',
 			proffin:'',
 
-			
+			fhaffich : 'local',
 
 		});

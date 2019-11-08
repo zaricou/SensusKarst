@@ -1,9 +1,4 @@
-/**
- * This class is the controller for the main view for the application. It is specified as
- * the "controller" of the Main view class.
- *
- * TODO - Replace this content of this view to suite the needs of your application.
- */
+
 Ext.define('SensusKarst.view.main.MainController', {
     extend: 'Ext.app.ViewController',
 
@@ -20,6 +15,7 @@ Ext.define('SensusKarst.view.main.MainController', {
 			val.declench = store.get("parametre.declench");
 			val.declench0 = store.get("parametre.declench0");
 			val.moyenne = store.get("parametre.moyenne");
+			
 		}
 		else{
 			store.set("parametre.port",val.port);
@@ -29,12 +25,37 @@ Ext.define('SensusKarst.view.main.MainController', {
 			store.set("parametre.declench",val.declench);
 			store.set("parametre.declench0",val.declench0);
 			store.set("parametre.moyenne",val.moyenne);
+			store.set("parametre.moyenne",val.moyenne);
 		}
-   	
+		
+	   if (store.has("fhaffich")){
+	   	  val.fhaffich = store.get("fhaffich")
+	   }
+	   else{
+	   	  store.set("fhaffich",val.fhaffich);
+	   }
+	   var heuredh  = ~~(new Date().getTimezoneOffset()/60);
+		var minutedh = new Date().getTimezoneOffset()%60;
+		if (heuredh == 0){var dh = 'UTC'}
+		else if (heuredh == -1){var dh = 'UTC +01:00 (heure d\'hiver)'}
+		else if (heuredh == -2){var dh = 'UTC +02:00 (heure d\'été)'}
+		else {
+			var signe = '';
+			if (heuredh>0){signe = '-'}
+			else {signe = '+'}
+			if (heuredh<0){heuredh=-heuredh}
+			if (heuredh<10 && heuredh>-10 ){heuredh = '0'+heuredh}
+			if (minutedh==0){minutedh = '00'}
+			else if (minutedh<0){minutedh=-minutedh}
+			var dh = 'UTC '+signe+heuredh+':'+minutedh;
+			
+		}
+		this.getViewModel().set('heurelocal', dh);
     },
     
     afterRender: function () {
     	var me = this;
+    	
  		 const { ipcRenderer } = require('electron');
 	     var fichier = ipcRenderer.sendSync('get-file');
 	     if( fichier != null ){
@@ -90,7 +111,7 @@ Ext.define('SensusKarst.view.main.MainController', {
 												   		margin :'10 70',
 												   		flex : 1,
 												   		iconAlign: 'top',
-													    text:'Ouvrir un Graphique',
+													    text:'Graphique',
 													   	scale :'large',
 													   	 handler: function(){Ext.getCmp('main').setActiveTab(0);me.spash.close();} 
 												   	},

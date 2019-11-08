@@ -1318,6 +1318,8 @@ Ext.define('SensusKarst.view.main.graphcontrole', {
 		 var maxy = extreme.max
 		 var miny = extreme.min;
 		 var nom1 = chartd.yAxis[i].axisTitle.textStr;
+		 var inverse = chartd.yAxis[i].reversed;
+		 var oppose = chartd.yAxis[i].opposite;
 		 obj={
 		            xtype: 'fieldset',
 		            title: 'Axe '+nom1,
@@ -1334,20 +1336,36 @@ Ext.define('SensusKarst.view.main.graphcontrole', {
 		            		{  
 		                	fieldLabel: 'de',
 		                    step: 0.1,
+		                    decimalPrecision: 5,
 		                	name: j+'min',
 		                	value:  miny 
 		                	},
 		                	{  
 		                    fieldLabel: 'à ',
 		                    step: 0.1,
+		                    decimalPrecision: 5,
 		                    name: j+'max',
 		                    value:  maxy 
 		                    },
 		                    {  
 			                fieldLabel: 'Intervalle',
 			                step: 0.1,
+			                decimalPrecision: 5,
+			                minValue: 0,
 			                name: j+'int',
-			                },  
+			                },
+			                {
+			                xtype: 'checkbox',	
+				            fieldLabel: 'Inversé',
+				            name: j+'rev',
+				            checked : inverse,
+				            },
+			                {
+			                xtype: 'checkbox',	
+				            fieldLabel: 'A droite',
+				            name: j+'opp',
+				            checked : oppose,
+				            }
 		            ]
 		        };
 		 arr.push(obj);	
@@ -1406,13 +1424,13 @@ Ext.define('SensusKarst.view.main.graphcontrole', {
             	var ij = 0;
             	for (i=0; i < chartd.yAxis.length; i += 1) {
             		if(chartd.yAxis[i].axisTitle!=undefined){
-            		if (ij==0){var maxy = form12.getValues().amax;var miny = form12.getValues().amin;var inty = form12.getValues().aint;}
-        			else if(ij==1){var maxy = form12.getValues().bmax;var miny = form12.getValues().bmin;var inty = form12.getValues().bint;}
-        			else if(ij==2){var maxy = form12.getValues().cmax;var miny = form12.getValues().cmin;var inty = form12.getValues().cint;}
-        			else if(ij==3){var maxy = form12.getValues().dmax;var miny = form12.getValues().dmin;var inty = form12.getValues().dint;}
-        			else if(ij==4){var maxy = form12.getValues().emax;var miny = form12.getValues().emin;var inty = form12.getValues().eint;}
-        			else if(ij==5){var maxy = form12.getValues().fmax;var miny = form12.getValues().fmin;var inty = form12.getValues().fint;}
-        			else {var maxy = form12.getValues().gmax;var miny = form12.getValues().gmin;var inty = form12.getValues().gint;}
+            		if (ij==0){var maxy = form12.getValues().amax;var miny = form12.getValues().amin;var inty = form12.getValues().aint;var revy = form12.getValues().arev;var oppy = form12.getValues().aopp;}
+        			else if(ij==1){var maxy = form12.getValues().bmax;var miny = form12.getValues().bmin;var inty = form12.getValues().bint;var revy = form12.getValues().brev;var oppy = form12.getValues().bopp;}
+        			else if(ij==2){var maxy = form12.getValues().cmax;var miny = form12.getValues().cmin;var inty = form12.getValues().cint;var revy = form12.getValues().crev;var oppy = form12.getValues().copp;}
+        			else if(ij==3){var maxy = form12.getValues().dmax;var miny = form12.getValues().dmin;var inty = form12.getValues().dint;var revy = form12.getValues().drev;var oppy = form12.getValues().dopp;}
+        			else if(ij==4){var maxy = form12.getValues().emax;var miny = form12.getValues().emin;var inty = form12.getValues().eint;var revy = form12.getValues().erev;var oppy = form12.getValues().eopp;}
+        			else if(ij==5){var maxy = form12.getValues().fmax;var miny = form12.getValues().fmin;var inty = form12.getValues().fint;var revy = form12.getValues().frev;var oppy = form12.getValues().fopp;}
+        			else {var maxy = form12.getValues().gmax;var miny = form12.getValues().gmin;var inty = form12.getValues().gint;var revy = form12.getValues().grev;var oppy = form12.getValues().gopp;}
             		ij += 1;
         			 miny = Number(miny.replace(",", "."));
         			 maxy = Number(maxy.replace(",", "."));
@@ -1420,6 +1438,7 @@ Ext.define('SensusKarst.view.main.graphcontrole', {
         			 chartd.yAxis[i].setExtremes( miny,maxy,true,false);
         			 if (inty!=''){chartd.yAxis[i].update({tickInterval:inty});}
         			 else {chartd.yAxis[i].update({tickInterval:undefined,tickPixelInterval: 40,})}
+        			 chartd.yAxis[i].update({reversed:revy,opposite:oppy})
             		}
         		 }
         		 
@@ -1435,14 +1454,14 @@ Ext.define('SensusKarst.view.main.graphcontrole', {
             handler: function(){
             	var ij = 0;
             	for (i=0; i < chartd.yAxis.length; i += 1) {
-            	   if(chartd.yAxis[i].axisTitle!=undefined){
-            		if (ij==0){var maxy = form12.getValues().amax;var miny = form12.getValues().amin;var inty = form12.getValues().aint;}
-           			else if(ij==1){var maxy = form12.getValues().bmax;var miny = form12.getValues().bmin;var inty = form12.getValues().bint;}
-           			else if(ij==2){var maxy = form12.getValues().cmax;var miny = form12.getValues().cmin;var inty = form12.getValues().cint;}
-           			else if(ij==3){var maxy = form12.getValues().dmax;var miny = form12.getValues().dmin;var inty = form12.getValues().dint;}
-           			else if(ij==4){var maxy = form12.getValues().emax;var miny = form12.getValues().emin;var inty = form12.getValues().eint;}
-           			else if(ij==5){var maxy = form12.getValues().fmax;var miny = form12.getValues().fmin;var inty = form12.getValues().fint;}
-           			else {var maxy = form12.getValues().gmax;var miny = form12.getValues().gmin;var inty = form12.getValues().gint;}
+            		if(chartd.yAxis[i].axisTitle!=undefined){
+            		if (ij==0){var maxy = form12.getValues().amax;var miny = form12.getValues().amin;var inty = form12.getValues().aint;var revy = form12.getValues().arev;var oppy = form12.getValues().aopp;}
+        			else if(ij==1){var maxy = form12.getValues().bmax;var miny = form12.getValues().bmin;var inty = form12.getValues().bint;var revy = form12.getValues().brev;var oppy = form12.getValues().bopp;}
+        			else if(ij==2){var maxy = form12.getValues().cmax;var miny = form12.getValues().cmin;var inty = form12.getValues().cint;var revy = form12.getValues().crev;var oppy = form12.getValues().copp;}
+        			else if(ij==3){var maxy = form12.getValues().dmax;var miny = form12.getValues().dmin;var inty = form12.getValues().dint;var revy = form12.getValues().drev;var oppy = form12.getValues().dopp;}
+        			else if(ij==4){var maxy = form12.getValues().emax;var miny = form12.getValues().emin;var inty = form12.getValues().eint;var revy = form12.getValues().erev;var oppy = form12.getValues().eopp;}
+        			else if(ij==5){var maxy = form12.getValues().fmax;var miny = form12.getValues().fmin;var inty = form12.getValues().fint;var revy = form12.getValues().frev;var oppy = form12.getValues().fopp;}
+        			else {var maxy = form12.getValues().gmax;var miny = form12.getValues().gmin;var inty = form12.getValues().gint;var revy = form12.getValues().grev;var oppy = form12.getValues().gopp;}
             		ij += 1;
         			 miny = Number(miny.replace(",", "."));
         			 maxy = Number(maxy.replace(",", "."));
@@ -1450,7 +1469,8 @@ Ext.define('SensusKarst.view.main.graphcontrole', {
         			 chartd.yAxis[i].setExtremes( miny,maxy,true,false);
         			 if (inty!=''){chartd.yAxis[i].update({tickInterval:inty});}
         			 else {chartd.yAxis[i].update({tickInterval:undefined,tickPixelInterval: 40,})}
-            	   }
+        			 chartd.yAxis[i].update({reversed:revy,opposite:oppy})
+            		}
         		 }
         		 
         		 var minx1 = form12.getValues().from_date;
@@ -1483,14 +1503,130 @@ Ext.define('SensusKarst.view.main.graphcontrole', {
       }).show();
     
   },
-		 
-    
+  
+  modifzonedate: function (zone) {
+  	if (zone== 'local'){
+  		var Highcharts = require('highcharts/highstock');
+  		Highcharts.setOptions({
+				
+				time: {
+			        useUTC: false
+			    },
+  		})
+  		chartd.update({
+					  time: {
+						useUTC: false,
+					  }
+					});
+  	}
+  	else{
+  		chartd.update({
+					  time: {
+					  	useUTC: true,
+					    timezoneOffset:-zone*60
+					  }
+					});
+  	}
+  	
+  	var titreaxe = this.nomzonehoraire(zone);
+  	
+  	chartd.xAxis[0].setTitle({text: '<B>Date [ '+titreaxe+' ]<\B>'});
+  	
+  },
+  
+  nomzonehoraire : function (zone) {
+  	var retval = 'Heure Local (ordi)';
+	switch (zone) {
+	    case '0':
+	        retval = 'Temps universel (UTC)';
+	        break;
+	    case '1':
+	        retval = 'UTC +01 Heure d\'hiver';
+	        break;
+	    case '2':
+	        retval = 'UTC +02 Heure d\'été';
+	        break;
+	    case '-12':
+	        retval = 'UTC -12:00';
+	        break;    
+	    case '-11':
+	        retval = 'UTC -11:00';
+	        break;
+	    case '-10':
+	        retval = 'UTC -10:00';
+	        break;
+	    case '-9':
+	        retval = 'UTC -09:00';
+	        break;
+	    case '-8':
+	        retval = 'UTC -08:00';
+	        break;
+	    case '-7':
+	        retval = 'UTC -07:00';
+	        break ;
+	    case '-6':
+	        retval = 'UTC -06:00';
+	        break;
+	    case '-5':
+	        retval = 'UTC -05:00';
+	        break;
+	    case '-4':
+	        retval = 'UTC -04:00';
+	        break;
+	    case '-3':
+	        retval = 'UTC -03:00';
+	        break;
+	    case '-2':
+	        retval = 'UTC -02:00';
+	        break;
+	    case '-1':
+	        retval = 'UTC -01:00';
+	        break ; 
+	    case '3':
+	        retval = 'UTC +03:00';
+	        break ;
+	    case '4':
+	        retval = 'UTC +04:00';
+	        break;
+	    case '5':
+	        retval = 'UTC +05:00';
+	        break;
+	    case '6':
+	        retval = 'UTC +06:00';
+	        break;
+	    case '7':
+	        retval = 'UTC +07:00';
+	        break;
+	    case '8':
+	        retval = 'UTC +08:00';
+	        break;
+	    case '9':
+	        retval = 'UTC +09:00';
+	        break;
+	    case '10':
+	        retval = 'UTC +10:00';
+	        break ;  
+	    case '11':
+	        retval = 'UTC +11:00';
+	        break;
+	    case '12':
+	        retval = 'UTC +12:00';
+	        break ;    
+	}
+	return retval;
+  	
+  },
+  
+ afterRender: function () {
+  this.modifzonedate(val.fhaffich);
+ },
+ 
+ 
  beforeRender: function () {
 var thiss=this;		
 
 this.winlistebrut = Ext.create('SensusKarst.view.main.ListebrutWin');
 this.winouvrefichier = Ext.create('SensusKarst.view.main.graphique.ouvrefichierwin');
-
 
 
 var Highcharts = require('highcharts/highstock');

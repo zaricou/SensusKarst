@@ -323,6 +323,101 @@ Ext.define('SensusKarst.view.main.parametreController', {
 									        items: thiss.formmodif,
 									      }).show();
     },
+    
+   ondatemofif : function () {
+   		var thiss = this;
+    	thiss.formmodif = Ext.create('Ext.form.Panel', {
+									          bodyPadding: 10,
+  											  fieldDefaults: {
+											        labelWidth: 195,
+											    },
+										            items: [
+										              {
+											            xtype: 'combobox',
+											            fieldLabel: 'Zone horaire ',
+											            allowBlank:false,
+											            name: 'zone',
+											            store: {
+											            	type: 'array',
+											                fields: [ 'format','zone' ],
+											                data: [
+											                	['Heure Local (ordi)','local'],
+											                    ['Temps universel (UTC)','0'],
+											                    ['UTC +01 Heure d\'hiver','1'],
+											                    ['UTC +02 Heure d\'été','2'],
+											                    ['UTC +03:00','3'],
+											                    ['UTC +04:00','4'],
+											                    ['UTC +05:00','5'],
+											                    ['UTC +06:00','6'],
+											                    ['UTC +07:00','7'],
+											                    ['UTC +08:00','8'],
+											                    ['UTC +09:00','9'],
+											                    ['UTC +10:00','10'],
+											                    ['UTC +11:00','11'],
+											                    ['UTC +12:00','12'],
+											                    ['UTC -12:00','-12'],
+											                    ['UTC -11:00','-11'],
+											                    ['UTC -10:00','-10'],
+											                    ['UTC -09:00','-9'],
+											                    ['UTC -08:00','-8'],
+											                    ['UTC -07:00','-7'],
+											                    ['UTC -06:00','-6'],
+											                    ['UTC -05:00','-5'],
+											                    ['UTC -04:00','-4'],
+											                    ['UTC -03:00','-3'],
+											                    ['UTC -02:00','-2'],
+											                    ['UTC -01:00','-1']
+											                    
+											                ]
+											            },
+											            valueField: 'zone',
+											            value: thiss.getViewModel().get('fhaffich'),
+											            forceSelection : true,
+														allowBlank: false,
+											            displayField: 'format',
+											            typeAhead: true,
+											        },
+										           ],
+									        buttons: [
+									        {
+									            text: 'Modifier',
+									            disabled: true,
+                                				formBind: true,
+									            handler: function(){
+									            	    const Store = require('electron-store');
+														const store = new Store();
+									            		var config = thiss.formmodif.getForm().getValues();
+									            		val.fhaffich = config.zone;
+														thiss.getViewModel().set('fhaffich', val.fhaffich);
+									            		store.set("fhaffich",val.fhaffich);
+									            		Ext.getCmp('graph2').getController('graphcontrole').modifzonedate(val.fhaffich);
+									            		thiss.formmodif.destroy(); 
+								            		    thiss.winmodif.destroy();
+									            }
+									        },
+									        {
+									            text: 'Annuler',
+									            handler: function(){
+									            	thiss.formmodif.destroy(); 
+								            		thiss.winmodif.destroy(); 
+									            }
+									        }]
+									        
+									    });
+		thiss.winmodif = Ext.create('Ext.window.Window', {
+									        title: 'Définition Intervalle mesure en veille',
+									        closable : false,
+									        layout: 'fit',
+									        alwaysOnTop : -1000,
+									        modal: true,
+									        items: thiss.formmodif,
+									      }).show();
+   		
+   		
+   		
+   	
+   },
+   
 
     afterRender: function () {
    		
@@ -333,6 +428,8 @@ Ext.define('SensusKarst.view.main.parametreController', {
 		this.getViewModel().set('pdeclench', val.declench);
 		this.getViewModel().set('pdeclench0', val.declench0);
 		this.getViewModel().set('pmoyenne', val.moyenne);
+		this.getViewModel().set('fhaffich', val.fhaffich);
+		
     },
     
     onreinitiallisation : function () {

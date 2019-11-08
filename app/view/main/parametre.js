@@ -199,6 +199,81 @@ Ext.define('SensusKarst.view.main.parametre', {
             			 }
             		},
             		{html :"<br>",bodyStyle : 'background-color:transparent;',},
+            			{
+            			 title: 'Zone Horaire',
+            			 maxHeight: 300,
+            			 border : 5,
+            			 bodyPadding: 10,
+            			 items: [
+								        {
+									        xtype: 'displayfield',
+									        fieldLabel: 'Zone horaire local (ordinateur)',
+									        labelWidth : 240,
+									        bind:{ value: '{heurelocal}'}
+									    },
+								        {
+								        xtype: 'fieldcontainer',
+								        fieldLabel: 'Zone horaire d\'affichage des graphiques',
+								        labelWidth : 240,
+								        margin: '15 0 0 0',
+								        layout: 'hbox',
+								        defaults: {
+								            hideLabel: true
+								        },
+								        items: [{
+								             xtype: 'combobox',
+											  name: 'zone',
+											            store: {
+											            	type: 'array',
+											                fields: [ 'format','zone' ],
+											                data: [
+											                    
+											                    
+											                    ['Heure Local (ordi)','local'],
+											                    ['Temps universel (UTC)','0'],
+											                    ['UTC +01 Heure d\'hiver','1'],
+											                    ['UTC +02 Heure d\'été','2'],
+											                    ['UTC +03:00','3'],
+											                    ['UTC +04:00','4'],
+											                    ['UTC +05:00','5'],
+											                    ['UTC +06:00','6'],
+											                    ['UTC +07:00','7'],
+											                    ['UTC +08:00','8'],
+											                    ['UTC +09:00','9'],
+											                    ['UTC +10:00','10'],
+											                    ['UTC +11:00','11'],
+											                    ['UTC +12:00','12'],
+											                    ['UTC -12:00','-12'],
+											                    ['UTC -11:00','-11'],
+											                    ['UTC -10:00','-10'],
+											                    ['UTC -09:00','-9'],
+											                    ['UTC -08:00','-8'],
+											                    ['UTC -07:00','-7'],
+											                    ['UTC -06:00','-6'],
+											                    ['UTC -05:00','-5'],
+											                    ['UTC -04:00','-4'],
+											                    ['UTC -03:00','-3'],
+											                    ['UTC -02:00','-2'],
+											                    ['UTC -01:00','-1'],
+											                ]
+											            },
+											valueField: 'zone',
+								            width : 150,
+								            displayField: 'format',
+											typeAhead: true,
+								            bind: '{fhaffich}',
+								            readOnly : true,
+								            margin: '0 20 20 0',
+								        }, {
+								            xtype     : 'button',
+								            text      : 'Modifier',
+								            handler: 'ondatemofif'
+								        }]
+								    	},
+								]
+            		},
+            		{html :"<br>",bodyStyle : 'background-color:transparent;',},
+            		
             		{
 					        title: 'Gestion Sauvegarde',
 					        layout : 'vbox',

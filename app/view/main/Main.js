@@ -39,7 +39,7 @@ Ext.define('SensusKarst.view.main.Main', {
     
     headerPosition: 'top',
     
-    activeTab :1,
+    activeTab :0,
 
     defaults: {
         tabConfig: {

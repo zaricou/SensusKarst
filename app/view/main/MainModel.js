@@ -8,7 +8,7 @@ Ext.define('SensusKarst.view.main.MainModel', {
 
     data: {
         name: '  SensusKarst  ',
-        version: '1.3.6'
+        version: '1.4.5'
     }
 
 });
