@@ -191,7 +191,7 @@ Ext.define('SensusKarst.view.main.graphique.ouvrefichierform', {
 			text : 'Aide format',
 			handler : 'aideformat',
 		},
-		{ xtype: 'tbspacer', width: 50 },
+		{ xtype: 'tbspacer', width: 15 },
     	{
 			text : 'Ajouter série',
 			handler : 'addserie',
@@ -199,6 +199,15 @@ Ext.define('SensusKarst.view.main.graphique.ouvrefichierform', {
 		{
 			text : 'Supprimer série',
 			handler : 'suppserie',
+		},
+		{ xtype: 'tbspacer', width: 15 },
+    	{
+			text : 'Sélectionner un format enregistré',
+			handler : 'selectformat',
+		},
+		{
+			text : 'Enregistrer format',
+			handler : 'enregistreformat',
 		},
 		{ xtype: 'tbfill' },
     	{

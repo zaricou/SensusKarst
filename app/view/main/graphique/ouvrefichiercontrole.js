@@ -28,6 +28,137 @@ Ext.define('SensusKarst.view.main.graphique.ouvrefichiercontrole', {
 			result=result+nbSeconds+' s ';
 		return result;
  	},
+ 	
+   selectformat: function () {
+   							//var parametres = this.view.getComponent('form').getForm();
+   							var me = this;
+   							const Store = require('electron-store');
+							const store = new Store();   							
+   							var format = store.get("format");
+							var result = [];
+							var obj = [];
+								for(var i in format){
+									obj = [i];
+									result.push(obj);
+								}
+   							me.formtitre = Ext.create('Ext.form.Panel', {
+									          bodyPadding: 10,
+  											  layout: 'form',
+											  width: 400,
+										            items: [
+										              {
+														xtype: 'combobox',
+														fieldLabel: 'Format',
+														name: 'format',
+														forceSelection : true,
+														labelWidth : 130,
+														store: {
+														            	type: 'array',
+														                fields: [ 'format' ],
+														                data:  result
+														                
+														            },
+														displayField: 'format',
+														typeAhead: true,
+													 },
+										           ],
+									        buttons: [
+									        {
+									            text: 'Séléctionner',
+									            handler: function(){
+									              var cformat = me.formtitre.getForm().getValues().format;
+									              if (cformat!=''){
+									            	while (me.nbreserie>1){
+									            		me.suppserie();
+									            	}
+									            		
+									            	var choix = store.get("format."+cformat);
+									            	if (choix.colonne.length>1){
+									            		for (var i = 1; i < choix.colonne.length; i++) {
+															me.addserie();
+														}
+									            	}
+									            		var parametres = me.view.getComponent('form').getForm();
+									            		parametres.setValues(choix);
+									            		
+									            		if (choix.colonne.length>1){
+									            			parametres.setValues({
+									            								colonne: choix.colonne[0],
+									            								axe: choix.axe[0],
+									            								titre: choix.titre[0],
+									            								commen: choix.commen[0],
+									            								});
+									            			for (var i = 1; i < choix.colonne.length; i++) {
+									            				var j = i+1;
+									            				var serie1 = me.view.getComponent('form').getComponent('serie'+j);
+									            				serie1.getComponent('col'+j).setValue(choix.colonne[i]);
+									            				serie1.getComponent('axe'+j).setValue(choix.axe[i]);
+									            				serie1.getComponent('titre'+j).setValue(choix.titre[i]);
+									            				serie1.getComponent('com'+j).setValue(choix.commen[i]);
+									            			}
+									            								
+									            		}
+									            		
+									            	me.formtitre.destroy(); 
+								            		me.wintitre.destroy(); 
+									              }
+									            }
+									        },
+									        {
+									            text: 'Annuler',
+									            handler: function(){
+									            	me.formtitre.destroy(); 
+								            		me.wintitre.destroy(); 
+									            }
+									        }]
+									        
+									    });
+							 me.wintitre = Ext.create('Ext.window.Window', {
+									        title: 'Choisir un format prédéfini',
+									        closable : false,
+									        layout: 'fit',
+									        modal: true,
+									        items: me.formtitre,
+									      }).show();
+   							
+   							
+   },						
+ 	
+   enregistreformat: function () {
+   							const Store = require('electron-store');
+							const store = new Store();
+   							var me = this;
+                            var parametres = this.view.getComponent('form').getForm().getValues();
+                            var nbreserie = this.nbreserie;
+                            Ext.MessageBox.show({
+						         title: 'Enregistrer le format',
+						         msg: 'Nom du format : ',
+						         width:200,
+						         buttons: Ext.MessageBox.OKCANCEL,
+						         prompt : true,
+						         closable: false,
+						         fn: function(btn,titre) {
+						        	 if(btn == 'ok'){
+						        	 	 if(titre==""){me.enregistreformat()}
+						        	 	 else if (store.has("format."+titre)){
+						        	 	 	 Ext.Msg.confirm('Problème !', 'Un format avec ce nom existe déjà<br>Souhaitez-vous le remplacer ?', function(btnText, sInput){
+								                if(btnText === 'yes'){
+								                	 store.set("format."+titre,parametres);
+								                	}
+								                else {me.enregistreformat()}
+								            	}, this);
+						        	 	 	 
+						        	 	 }
+						        	 	 else {
+										 	store.set("format."+titre,parametres);
+						        	 	 }
+						        	 }
+						        	 
+						         }
+						     });
+                           
+   },
+   
     
     typefichier : function (nomfich) {
         
@@ -713,6 +844,7 @@ Ext.define('SensusKarst.view.main.graphique.ouvrefichiercontrole', {
     },
     
     addserie : function () {
+                            var me = this;
                             var form = this.view.getComponent('form');
                             var valeurs = form.getForm().getValues();
                             if (this.nbreserie==1){
@@ -724,8 +856,9 @@ Ext.define('SensusKarst.view.main.graphique.ouvrefichiercontrole', {
                                     var comm = valeurs.commen[0];
                             }
                             this.nbreserie += 1 ;
+                            var serie =  this.nbreserie;
                             form.add(Ext.create("Ext.form.FieldSet", {
-                                                                        itemId : "serie"+this.nbreserie,
+                                                                        itemId : "serie"+serie,
                                                                         title: 'Série de données',
                                                                         defaultType: 'textfield',
                                                                          fieldDefaults: {
@@ -740,6 +873,7 @@ Ext.define('SensusKarst.view.main.graphique.ouvrefichiercontrole', {
                                                                             typeAhead: true,
                                                                             forceSelection : true,
                                                                             labelWidth: 65,
+                                                                            itemId : "col"+serie,
                                                                             allowBlank:false,
                                                                             name: 'colonne'
                                                                         }, {
@@ -751,7 +885,7 @@ Ext.define('SensusKarst.view.main.graphique.ouvrefichiercontrole', {
                                                                                 type: 'listeaxe'
                                                                             },
                                                                             valueField: 'nomaxe',
-                                            
+                                            								itemId : "axe"+serie,
                                                                             displayField: 'nomaxe',
                                                                             typeAhead: true,
                                                                             forceSelection : true,
@@ -760,6 +894,7 @@ Ext.define('SensusKarst.view.main.graphique.ouvrefichiercontrole', {
                                                                             fieldLabel: 'Titre',
                                                                             allowBlank:false,
                                                                             value: titre,
+                                                                            itemId : "titre"+serie,
                                                                             name: 'titre'
                                                                         },
                                                                         {
@@ -767,8 +902,9 @@ Ext.define('SensusKarst.view.main.graphique.ouvrefichiercontrole', {
                                                                         hideLabel: true,
                                                                         emptyText: 'Commentaires...',
                                                                         value: comm,
+                                                                        itemId : "com"+serie,
                                                                         name: 'commen',
-                                                                        height:100,
+                                                                        height:115,
                                                                        
                                                                          }
                                                                         ]

@@ -17,10 +17,7 @@
     
      "locale": "fr", 
     
-    
-    /**
-     * The relative path to the application's markup file (html, jsp, asp, etc.).
-     */
+
     "indexHtmlPath": "index.html",
 
     /**
@@ -257,6 +254,13 @@
             "bundle": true,
             "exclude": ["fashion"]
         }
+        //,
+        //{
+        //"path": "electron/node_modules/highcharts/css/stocktools/gui.css"
+   		//},
+   		//{
+        //"path": "electron/node_modules/highcharts/css/annotations/popup.css"
+   		//}
     ],
 
     /**

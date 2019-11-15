@@ -19,7 +19,7 @@
     "electron-regedit": "^1.0.6",
     "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^4.0.0",
-    "highcharts": "^7.1.1",
+    "highcharts": "^7.2.1",
     "highcharts-custom-events": "^2.2.5",
     "jspdf": "^1.5.3",
     "nan": "^2.12.1",

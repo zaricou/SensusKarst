@@ -278,12 +278,12 @@ Ext.define('SensusKarst.view.main.parametre', {
 					        title: 'Gestion Sauvegarde',
 					        layout : 'vbox',
 					        vertical: true,
-					        maxHeight: 230,
+					        maxHeight: 250,
 					        border : 5,
             			 	bodyPadding: 10,
 					        defaultType: 'button',
 					        defaults: {
-							            	margin : '10 25',
+							            	margin : '5 25',
 							                anchor: '100%',
 							            },
 					        items: [
@@ -294,7 +294,20 @@ Ext.define('SensusKarst.view.main.parametre', {
 								    {
 								        text: 'Restaurer des paramètres et fichiers sensus brut SensusKarst',
 								        handler: 'onrestore'
-								    },								    
+								    },
+								    {
+								        text: 'Importer un  format d\'importation SensusKarst',
+								        margin : '20 25 5 25',
+								        handler: 'onimportformat'
+								    },
+								    {
+								        text: 'Exporter un  format d\'importation SensusKarst',
+								        handler: 'onexportformat'
+								    },
+								    {
+								        text: 'Supprimer un  format d\'importation SensusKarst',
+								        handler: 'onsupformat'
+								    },
 					        ]
 					    }
  				]

@@ -511,5 +511,213 @@ Ext.define('SensusKarst.view.main.parametreController', {
 
 	},
 	
+	
+	onsupformat : function (butt) {
+		var me = this
+		const remote = require('electron').remote; 
+		const app = remote.app;
+		const Store = require('electron-store');
+		const store = new Store();
+		const fs = require('fs')
+		var format = store.get("format");
+							var result = [];
+							var obj = [];
+								for(var i in format){
+									obj = [i];
+									result.push(obj);
+								}
+   							me.formtitre = Ext.create('Ext.form.Panel', {
+									          bodyPadding: 10,
+  											  layout: 'form',
+											  width: 400,
+										            items: [
+										              {
+														xtype: 'combobox',
+														fieldLabel: 'Format',
+														name: 'format',
+														forceSelection : true,
+														labelWidth : 130,
+														store: {
+														            	type: 'array',
+														                fields: [ 'format' ],
+														                data:  result
+														                
+														            },
+														displayField: 'format',
+														typeAhead: true,
+													 },
+										           ],
+									        buttons: [
+									        {
+									            text: 'Supprimer format',
+									            handler: function(){
+									              var cformat = me.formtitre.getForm().getValues().format;
+									              if (cformat == ""){
+									              }
+									              else{
+									              Ext.MessageBox.confirm('Confirmation', 'Supprimer le format : '+cformat, 
+																	function(btn){
+																		if (btn == 'yes'){
+																			store.delete("format."+cformat)
+																		}
+																	}, 
+																	this);
+									            		
+									            	me.formtitre.destroy(); 
+								            		me.wintitre.destroy(); 
+									              }
+									            }
+									        },
+									        {
+									            text: 'Annuler',
+									            handler: function(){
+									            	me.formtitre.destroy(); 
+								            		me.wintitre.destroy(); 
+									            }
+									        }]
+									        
+									    });
+							 me.wintitre = Ext.create('Ext.window.Window', {
+									        title: 'Supprimer un format prédéfini',
+									        closable : false,
+									        layout: 'fit',
+									        modal: true,
+									        items: me.formtitre,
+									      }).show();
+		
+		
+		
+	},
+	
+	
+	onexportformat : function (butt) {
+		var me = this
+		const remote = require('electron').remote; 
+		const app = remote.app;
+		const Store = require('electron-store');
+		const store = new Store();
+		const fs = require('fs')
+		var format = store.get("format");
+							var result = [];
+							var obj = [];
+								for(var i in format){
+									obj = [i];
+									result.push(obj);
+								}
+   							me.formtitre = Ext.create('Ext.form.Panel', {
+									          bodyPadding: 10,
+  											  layout: 'form',
+											  width: 400,
+										            items: [
+										              {
+														xtype: 'combobox',
+														fieldLabel: 'Format',
+														name: 'format',
+														forceSelection : true,
+														labelWidth : 130,
+														store: {
+														            	type: 'array',
+														                fields: [ 'format' ],
+														                data:  result
+														                
+														            },
+														displayField: 'format',
+														typeAhead: true,
+													 },
+										           ],
+									        buttons: [
+									        {
+									            text: 'Exporter',
+									            handler: function(){
+									              var cformat = me.formtitre.getForm().getValues().format;
+									              var choix = store.get("format."+cformat);
+									              var jformat = JSON.stringify(choix);
+									              remote.dialog.showSaveDialog(remote.getCurrentWindow(), {
+											        		    title: 'Exportation Format SensusKarst',
+											        		    defaultPath : cformat+".fsk",
+											        		    filters: [
+											        		            {name: 'Format SensusKarst', extensions: ['fsk']},
+											        		        ]
+											        		    },
+											        		    (file) => {
+											        		    	 if (typeof file != 'undefined'){
+											        		    	 	fs.writeFile(file, jformat,'utf8', function(err){
+																		    if(err!=null){alert(err);}
+																		});
+											        		    	 	
+											        		    		 
+											        		    	 }
+											        		    });
+									            		
+									            	me.formtitre.destroy(); 
+								            		me.wintitre.destroy(); 
+									              
+									            }
+									        },
+									        {
+									            text: 'Annuler',
+									            handler: function(){
+									            	me.formtitre.destroy(); 
+								            		me.wintitre.destroy(); 
+									            }
+									        }]
+									        
+									    });
+							 me.wintitre = Ext.create('Ext.window.Window', {
+									        title: 'Choisir un format prédéfini à exporter',
+									        closable : false,
+									        layout: 'fit',
+									        modal: true,
+									        items: me.formtitre,
+									      }).show();
+		
+		
+		
+	},
+	
+	
+	onimportformat : function (butt) {
+		const remote = require('electron').remote; 
+		const app = remote.app;
+		
+		remote.dialog.showOpenDialog(remote.getCurrentWindow(), {
+							title: 'Importation Format SensusKarst',
+							properties : ['openFile'],
+							filters: [{name: 'Format SensusKarst', extensions: ['fsk']}]
+							},(file) => {
+										if (typeof file != 'undefined' ){
+											var chemin = file[0].split('.');
+											var nom1 = chemin[0].split('\\');
+											var nom = nom1[nom1.length-1];
+											Ext.MessageBox.confirm('Confirmation', 'Confirmer l\'importation du format : '+nom, 
+																	function(btn){
+																		if (btn == 'yes'){
+																			const Store = require('electron-store');
+																			const store = new Store();
+																			const fs = require('fs')
+																			fs.readFile(file[0],'utf8', function(err, contents) {
+																			   if (store.has("format."+nom)){
+																        	 	 	 Ext.Msg.confirm('Problème !', 'Un format avec ce nom existe déjà<br>Souhaitez-vous le remplacer ?', function(btnText, sInput){
+																		                if(btnText === 'yes'){
+																		                	 store.set("format."+nom,JSON.parse(contents));
+																		                	}
+																		            	}, this);
+																        	 	 	 
+																        	 	 }
+																        	 	 else {
+																				 	store.set("format."+nom,JSON.parse(contents));
+																        	 	 }
+																			})
+																		}
+																	}, 
+																	this);
+											
+										}
+									});
+		
+
+	},
+	
+	
 
 });

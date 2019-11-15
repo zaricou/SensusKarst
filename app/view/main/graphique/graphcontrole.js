@@ -83,9 +83,17 @@ Ext.define('SensusKarst.view.main.graphcontrole', {
     fs.readFile(file,'utf8', function(err, contents) {
 		var fich=contents.split('\n');
 		var appareil = Number(fich[0].substring(35,40));
+		
+		var date1 = Ext.Date.parse(fich[3].substring(6,23), 'y/m/d-H:i:s');
+        var ecart =  date1.getTimezoneOffset()/60;
+             var zone = '';
+             var formatzone = '';
+             if (ecart == -2){zone = ' +02:00';formatzone = ' P';}
+             else if (ecart == -1){zone = ' +01:00';formatzone = ' P';}
+             else if (ecart == 0){zone = ' +00:00';formatzone = ' P';}
 		var data1=[],data2=[],data3=[],datatur=[],datatemp=[],datacondu=[];
 		for(var i= 3; i < fich.length; i++){
-			var date = Number(Ext.Date.parse(fich[i].substring(6,23), 'y/m/d-H:i:s'));
+			var date = Number(Ext.Date.parse(fich[i].substring(6,23)+zone, 'y/m/d-H:i:s'+formatzone));
 			var t1 = Number(fich[i].substring(24,33));
 			var t2 =  Number(fich[i].substring(34,43));
 			var t3 =  Number(fich[i].substring(44,53));
@@ -1530,7 +1538,7 @@ Ext.define('SensusKarst.view.main.graphcontrole', {
   	
   	var titreaxe = this.nomzonehoraire(zone);
   	
-  	chartd.xAxis[0].setTitle({text: '<B>Date [ '+titreaxe+' ]<\B>'});
+  	chartd.xAxis[0].setTitle({text: 'Date [ '+titreaxe+' ]'});
   	
   },
   
@@ -1636,6 +1644,14 @@ require('highcharts/modules/export-data')(Highcharts);
 HighchartsCustomEvents = require('highcharts-custom-events')(Highcharts);
 require('highcharts/modules/boost')(Highcharts);
 require('highcharts/modules/no-data-to-display')(Highcharts);
+require('highcharts/modules/broken-axis')(Highcharts);
+
+//require('highcharts/indicators/indicators-all')(Highcharts)
+//require('highcharts/modules/drag-panes')(Highcharts)
+//require('highcharts/modules/annotations-advanced')(Highcharts)
+//require('highcharts/modules/price-indicator')(Highcharts)
+//require('highcharts/modules/full-screen')(Highcharts)
+//require('highcharts/modules/stock-tools')(Highcharts)
 
 
 Highcharts.setOptions({
@@ -1805,6 +1821,8 @@ chartd = new Highcharts.StockChart({
               lineWidth:1,
               showInNavigator:true,
               getExtremesFromAll: true, 
+              gapSize: 3,
+              gapUnit : 'relative',
      	         }
      	
       
