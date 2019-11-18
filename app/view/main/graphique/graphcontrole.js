@@ -2,7 +2,7 @@ Ext.define('SensusKarst.view.main.graphcontrole', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.graphcontrole',
     
-    requires: [],
+//    requires: ['SensusKarst.view.main.choixcouleurwin'],
    
  convseconde : function (time) {
 		var reste=Math.round(time);
@@ -539,48 +539,9 @@ Ext.define('SensusKarst.view.main.graphcontrole', {
 				    	{
 				        text: 'Modifier Couleur',
 				        handler: function () {
-				        				thiss.formcouleur = Ext.create('Ext.form.Panel', {
-									          bodyPadding: 10,
-  											  layout: 'form',
-											  width: 400,
-										            items: [
-										              {xtype: 'colorfield',
-												        name: 'couleur',
-												        fieldLabel: 'Couleur',
-												        value: serie.color,
-												        color: serie.color
-										              },
-										           ],
-									        buttons: [
-									        {
-									            text: 'Valider',
-									            handler: function(){
-									            		var config = thiss.formcouleur.getForm().getValues();
-									            		serie.update({color:"#"+config.couleur}, false);
-									            		thiss.formcouleur.destroy(); 
-														thiss.wincouleur.destroy();
-														chartd.legend.update({enabled: true,
-																	          borderColor: 'black',
-																	          borderWidth: 1,
-																	          margin:20});
-									            }
-									        },
-									        {
-									            text: 'Annuler',
-									            handler: function(){
-									            	thiss.formcouleur.destroy(); 
-								            		thiss.wincouleur.destroy(); 
-									            }
-									        }]
-									        
-									    });
-									 thiss.wincouleur = Ext.create('Ext.window.Window', {
-									        title: 'Modifier la couleur de la série',
-									        closable : false,
-									        layout: 'fit',
-									        modal: true,
-									        items: thiss.formcouleur,
-									      }).show();
+				        				thiss.getViewModel().set('couleurserie',serie.color.substr(1));
+				        				thiss.getViewModel().set('seriechangcouleur',serie);
+				        				thiss.wincolor = Ext.create('SensusKarst.view.main.choixcouleurwin', {}).show();				        	
 								        	}
 				    	}
 				    	,
@@ -719,6 +680,14 @@ Ext.define('SensusKarst.view.main.graphcontrole', {
 	 
 	 this.menu1.showAt(x,y-160);
  },
+ 
+ changecouleur : function (serie,couleur) {
+ 	serie.update({color:"#"+couleur}, false);
+		chartd.legend.update({enabled: true,
+								borderColor: 'black',
+								borderWidth: 1,
+								margin:20});
+ },	
 
  modiftitre : function (titre) {
 	 Ext.MessageBox.show({
@@ -1667,7 +1636,8 @@ Highcharts.setOptions({
 		thousandsSep: '',
 		noData: 'Pas de série de mesures chargée',
    },
-   colors: ["#0000FF", "#FF0000", "#00FF00", "#000000", "#00FFFF", "#FF00FF", "#008000", "#FFA500", "#808080", "#800000","#4B0082","#FFC0CB","#ADD8E6","#808000"],
+   colors: ["#0000FF", "#FF0000", "#00FF00", "#000000", "#00FFFF", "#FF00FF", "#008000", "#FFA500", "#D1D1D1", "#800000","#4B0082","#FFC0CB","#ADD8E6","#808000","#7A9BFF","#FF667B",
+			"#A4E400","#9E85C7","#F5E800","#FF8837","#9CF1CF"],
    yAxis : {
 		tickPixelInterval: 40,
         opposite: false,
