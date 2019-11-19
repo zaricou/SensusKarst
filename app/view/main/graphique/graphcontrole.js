@@ -483,57 +483,7 @@ Ext.define('SensusKarst.view.main.graphcontrole', {
 				    	,
 				    	{
 				        text: 'Modifier Nom',
-				        handler: function () {
-				        				thiss.formtitre = Ext.create('Ext.form.Panel', {
-									          bodyPadding: 10,
-  											  layout: 'form',
-											  width: 400,
-										            items: [
-										              {xtype: 'textfield',
-												        name: 'titre',
-												        fieldLabel: 'Titre',
-												        value: serie.name
-										              },	
-										              {xtype: 'textareafield',
-												        name: 'infos',
-												        fieldLabel: 'Infos',
-												        value: serie.userOptions.info  
-										              },
-										           ],
-									        buttons: [
-									        {
-									            text: 'Modifier',
-									            handler: function(){
-									            		var config = thiss.formtitre.getForm().getValues();
-									            		serie.name = config.titre;
-									            		serie.userOptions.name = config.titre;
-									            		serie.userOptions.info = config.infos;
-									            		serie.update({name:config.titre}, false);
-									            		thiss.formtitre.destroy(); 
-														thiss.wintitre.destroy();
-														chartd.legend.update({enabled: true,
-																	          borderColor: 'black',
-																	          borderWidth: 1,
-																	          margin:20});
-									            }
-									        },
-									        {
-									            text: 'Annuler',
-									            handler: function(){
-									            	thiss.formtitre.destroy(); 
-								            		thiss.wintitre.destroy(); 
-									            }
-									        }]
-									        
-									    });
-									 thiss.wintitre = Ext.create('Ext.window.Window', {
-									        title: 'Modifier nom',
-									        closable : false,
-									        layout: 'fit',
-									        modal: true,
-									        items: thiss.formtitre,
-									      }).show();
-								  }
+				        handler: function () {thiss.changenom(serie, 'Modifier nom');}
 				    	}
 				    	,
 				    	{
@@ -583,6 +533,11 @@ Ext.define('SensusKarst.view.main.graphcontrole', {
 				    	{
 							text : 'Tronquer Séries',
 							handler : function () {thiss.tronque(serie)}
+							
+						},
+						{
+							text : 'Fusionner Séries',
+							handler : function () {thiss.fusion(serie)}
 							
 						},
 				    	{
@@ -678,8 +633,62 @@ Ext.define('SensusKarst.view.main.graphcontrole', {
 				    ]
 				});
 	 
-	 this.menu1.showAt(x,y-160);
+	 this.menu1.showAt(x,y-180);
  },
+ 
+ 
+ changenom: function (serie,titre) {
+ 	var thiss = this;
+				        				thiss.formtitre = Ext.create('Ext.form.Panel', {
+									          bodyPadding: 10,
+  											  layout: 'form',
+											  width: 400,
+										            items: [
+										              {xtype: 'textfield',
+												        name: 'titre',
+												        fieldLabel: 'Titre',
+												        value: serie.name
+										              },	
+										              {xtype: 'textareafield',
+												        name: 'infos',
+												        fieldLabel: 'Infos',
+												        value: serie.userOptions.info  
+										              },
+										           ],
+									        buttons: [
+									        {
+									            text: 'Valider',
+									            handler: function(){
+									            		var config = thiss.formtitre.getForm().getValues();
+									            		serie.name = config.titre;
+									            		serie.userOptions.name = config.titre;
+									            		serie.userOptions.info = config.infos;
+									            		serie.update({name:config.titre}, false);
+									            		thiss.formtitre.destroy(); 
+														thiss.wintitre.destroy();
+														chartd.legend.update({enabled: true,
+																	          borderColor: 'black',
+																	          borderWidth: 1,
+																	          margin:20});
+									            }
+									        },
+									        {
+									            text: 'Annuler',
+									            handler: function(){
+									            	thiss.formtitre.destroy(); 
+								            		thiss.wintitre.destroy(); 
+									            }
+									        }]
+									        
+									    });
+									 thiss.wintitre = Ext.create('Ext.window.Window', {
+									        title: titre,
+									        closable : false,
+									        layout: 'fit',
+									        modal: true,
+									        items: thiss.formtitre,
+									      }).show();
+  },
  
  changecouleur : function (serie,couleur) {
  	serie.update({color:"#"+couleur}, false);
@@ -1045,6 +1054,132 @@ Ext.define('SensusKarst.view.main.graphcontrole', {
  
  
  
+  fusion:  function (serie) {
+	 var thiss=this;
+					 var arr = [];
+					 var obj = {};
+					 for (i=0; i < chartd.series.length; i += 1) {
+						 if (chartd.series[i].name.indexOf("Navigator")){
+						 	 if (chartd.series[i]==serie){obj={boxLabel: chartd.series[i].name, name: 'serie-'+i,checked: true};}
+							 else{obj={boxLabel: chartd.series[i].name, name: 'serie-'+i};}
+							    arr.push(obj);
+						 }
+					 }
+					 
+					 thiss.formfusion = Ext.create('Ext.form.Panel', {
+					        bodyPadding: 2,
+					        items:[
+					        	{
+						            xtype: 'fieldset',
+						            title: 'Choisir les séries à fusionner',
+						            padding : 3,
+						            margin: 5,
+						            items: {
+						            	xtype: 'checkboxgroup',
+						            	columns: 1,
+						            	items:arr,
+						            }
+						        },
+					        ],
+					        buttons: [
+					        {
+					            text: 'Fusionner',
+					            handler: function(){
+					            	
+					            	var serietronq = [];
+					            	Ext.iterate(thiss.formfusion.getForm().getValues(), function(key, value) {
+					            		serietronq.push(Number(key.substring(6)));
+					            	}, this);
+					            	
+							         if(serietronq.length < 2){
+							        			Ext.MessageBox.alert('Problème !', 'Il faut séléctionner au moins 2 séries à fusionner', this.showResult, this);
+							        		}
+							         else {
+							         	 var listeserie = [];
+										 for (i=0; i < serietronq.length; i += 1) {
+											var k = serietronq[i];
+											var obj = {};
+											obj.serie = k;
+											obj.debut = chartd.series[k].xData[0];
+											obj.fin = chartd.series[k].xData[chartd.series[k].xData.length-1];
+											listeserie.push(obj);
+										 }
+										 listeserie.sort(function (a, b) {
+											   return a.debut - b.debut;
+											});
+										var fin = 0;
+										var datanew = [];
+										var recouvre = 0;
+										listeserie.forEach(function(v) {
+											    k = v.serie;
+											    if (v.debut>fin){
+													for (j=0; j <chartd.series[k].xData.length; j += 1) {
+													     datanew.push([chartd.series[k].xData[j],chartd.series[k].yData[j]]); 		
+													    }
+													fin = v.fin;     
+											    }
+											    else {
+											    	recouvre = 1;
+											    }   
+										});
+													            	
+					            		if (recouvre == 1){
+					            			Ext.Msg.alert('Problème','Les séries possèdent des parties qui se chevauchent<br>Tronquer les séries pour régler le problème');
+					            			thiss.formfusion.destroy(); 
+											thiss.winfusion.destroy(); 
+					            		}
+					            		else{
+					            			Ext.Msg.confirm("Confirmation",
+							            					"Etes-vous sûr de vouloir fusionner les séries ?<br>les séries d'origine seront fermées ",
+							            					function(id) {
+							            						if (id === 'yes') {
+							            							var serie1;
+							            							var num = 0;
+							            							listeserie.forEach(function(v) {
+																		    k = v.serie;
+																		    if (num == 0){
+																		    	chartd.series[k].setData(datanew);
+																		    	serie1 = chartd.series[k];
+																		    	num = k;
+																		    }
+																		    else {
+																		    	chartd.series[k].remove();
+																		    }
+																			  
+																		      
+																	});
+																	thiss.changenom(serie1, 'Nom de la série fusionnée')
+												            		thiss.formfusion.destroy(); 
+												            		thiss.winfusion.destroy(); 
+							            						}
+							            					});
+					            				}			
+							        		}				
+							         
+					            	
+					            }
+					        },
+					        {
+					            text: 'Annuler',
+					            handler: function(){
+					            	thiss.formfusion.destroy(); 
+				            		thiss.winfusion.destroy(); 
+					            }
+					        }]
+					        
+					    });
+					 thiss.winfusion = Ext.create('Ext.window.Window', {
+					        title: 'Fusionner des séries',
+					        closable : false,
+					        layout: 'fit',
+					        modal: true,
+					        items: thiss.formfusion,
+					      }).show();
+	 
+	 
+ },
+ 
+ 
  
  tronque:  function (serie) {
 	 var thiss=this;
@@ -1070,7 +1205,7 @@ Ext.define('SensusKarst.view.main.graphcontrole', {
 					        items:[
 					        	{
 						            xtype: 'fieldset',
-						            title: 'Supprimer les données : ',
+						            title: 'Supprimer les mesures : ',
 						            padding : 3,
 						            margin: 5,
 						            fieldDefaults: {
