@@ -1099,7 +1099,7 @@ Ext.define('SensusKarst.view.main.graphcontrole', {
 										 for (i=0; i < serietronq.length; i += 1) {
 											var k = serietronq[i];
 											var obj = {};
-											obj.serie = k;
+											obj.serie = chartd.series[k];
 											obj.debut = chartd.series[k].xData[0];
 											obj.fin = chartd.series[k].xData[chartd.series[k].xData.length-1];
 											listeserie.push(obj);
@@ -1111,10 +1111,9 @@ Ext.define('SensusKarst.view.main.graphcontrole', {
 										var datanew = [];
 										var recouvre = 0;
 										listeserie.forEach(function(v) {
-											    k = v.serie;
 											    if (v.debut>fin){
-													for (j=0; j <chartd.series[k].xData.length; j += 1) {
-													     datanew.push([chartd.series[k].xData[j],chartd.series[k].yData[j]]); 		
+													for (j=0; j <v.serie.xData.length; j += 1) {
+													     datanew.push([v.serie.xData[j],v.serie.yData[j]]); 		
 													    }
 													fin = v.fin;     
 											    }
@@ -1136,14 +1135,13 @@ Ext.define('SensusKarst.view.main.graphcontrole', {
 							            							var serie1;
 							            							var num = 0;
 							            							listeserie.forEach(function(v) {
-																		    k = v.serie;
 																		    if (num == 0){
-																		    	chartd.series[k].setData(datanew);
-																		    	serie1 = chartd.series[k];
-																		    	num = k;
+																		    	v.serie.setData(datanew);
+																		    	serie1 = v.serie;
+																		    	num = 1;
 																		    }
 																		    else {
-																		    	chartd.series[k].remove();
+																		    	v.serie.remove();
 																		    }
 																			  
 																		      
