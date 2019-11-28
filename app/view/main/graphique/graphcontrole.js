@@ -540,6 +540,16 @@ Ext.define('SensusKarst.view.main.graphcontrole', {
 							handler : function () {thiss.fusion(serie)}
 							
 						},
+						{
+							text : 'Rééchantillonner  Série',
+							handler : function () {thiss.reechantillon(serie)}
+							
+						},
+						{
+							text : 'Calculer une Série',
+							handler : function () {thiss.calcul(serie)}
+							
+						},
 				    	{
 				        text: 'Informations sur la série',
 				        handler: function () {
@@ -633,7 +643,7 @@ Ext.define('SensusKarst.view.main.graphcontrole', {
 				    ]
 				});
 	 
-	 this.menu1.showAt(x,y-180);
+	 this.menu1.showAt(x,y-240);
  },
  
  
@@ -813,7 +823,10 @@ Ext.define('SensusKarst.view.main.graphcontrole', {
 													avap= 1;
 													me.winhauteur.hide();
 												}
-							            	}
+							            	},
+						              {
+						              	html : '(heure local)'
+						              }
 						            	]
 						              },
 						              {
@@ -844,7 +857,10 @@ Ext.define('SensusKarst.view.main.graphcontrole', {
 													avap= 2;
 													me.winhauteur.hide();
 												}
-							            	}
+							            	},
+						              {
+						              	html : '(heure local)'
+						              }
 						            	]
 						              },
 						           ]
@@ -1177,7 +1193,410 @@ Ext.define('SensusKarst.view.main.graphcontrole', {
 	 
  },
  
+  calcul:  function (serie) {
+  					var thiss=this;
+  					var condi = 0;
+  					function ajoutcondition(){
+  						    var form = thiss.formcalcul;
+                            var valeurs = form.getForm().getValues();
+                            if (condi == 0){
+                            	form.add(			{
+					        				margin : '0 0 5 0',
+					        				html : 'Conditions sur la valeur de la série d\'origine<br>(ne rien mettre pour pas de limite maximum ou minimum)'
+					        			}
+					        	);
+                            }
+                            
+                            form.add(	
+																		{
+                                                                        itemId : "condi"+condi,
+                            											xtype : 'fieldcontainer',
+                            											layout: 'hbox',
+                            											labelWidth : 100,
+                                                                        fieldLabel: 'Comprise entre',
+                                                                        labelSeparator : '',
+                                                                        
+                                                                        defaults: {
+																	                hideLabel: true,
+																	                margin: '0 2 0 0'
+																	            },
+                                                                        
+                                                                        items: [
+                                                                        	  {
+																	               name : 'min',
+																	               xtype: 'numberfield',
+																	               decimalPrecision: 6,
+																	               hideTrigger : true,
+																	               width: 70,
+																	           }, 
+																	           	{
+																		               xtype: 'displayfield',
+																		               value: 'et'
+																		        },
+																	           		{
+																	               name : 'max',
+																	               xtype: 'numberfield',
+																	               decimalPrecision: 6,
+																	               hideTrigger : true,
+																	               width: 70,
+																	           },
+																	           {
+																		         margin: '0 2 0 25',     
+																	           	xtype: 'displayfield',
+																		           value: ' Valeur calculée = '
+																		        },
+																	           {
+																            	xtype: 'textfield',	
+																                name: 'formu',
+																				width: 250,
+																            	},
+                                                                        ]
+                                                                    }		
+                     			);
+                     		form.getComponent('formule').setValue('null');	
+                     		form.getComponent('formule').hide();
+                     		condi += 1 ;
+  					}
+					 thiss.formcalcul = Ext.create('Ext.form.Panel', {
+					        bodyPadding: 8,
+					        items:[
+												    {
+													 xtype: 'textfield',
+													 labelWidth : 160,
+													 fieldLabel: 'Titre de la nouvelle série',													               
+													 name : 'titre',
+													 allowBlank : false,
+													 value : serie.name
+													 },
+													 {
+													 xtype: 'textarea',
+													 labelWidth : 160,
+													 fieldLabel: 'Infos de la nouvelle série',
+													 name : 'info',
+													 height : 80,
+													 value : serie.userOptions.info
+													 },
+													 {
+													 xtype: 'textfield',													 
+													 labelWidth : 160,
+													 fieldLabel: 'Axe de la nouvelle série',													               
+													 name : 'axe',
+													 allowBlank : false,
+													 value : serie.yAxis.userOptions.id
+													 },
+													 {
+													xtype: 'numberfield',
+		               								minValue: 0,
+													labelWidth : 160,
+													width: 230,
+													name : 'deci',
+													fieldLabel: 'Nombre de décimales',
+													allowBlank: false
+													},
+					        			{
+					        				margin : '20 0 5 0',
+					        				html : 'Indiquer la formule de calcul ci-dessous.<br>' +
+					        						'La valeur de la série d\'origine est symbolisée par "val".'
+					        			},
+					        			{
+							            	xtype: 'textfield',	
+							                fieldLabel: 'Valeur calculée = ',
+							                itemId : "formule",
+							                name: 'formule',
+							                allowBlank: false,
+							                labelWidth : 120,
+											width: 500,
+							                labelSeparator : '',
+							            	},
+						            					              
+						                 
+											
+						         				        	
+					        ],
+					        buttons: [
+					        {
+								text : 'Ajouter condition',
+								handler : function(){
+														if (condi==0){ajoutcondition();}
+														ajoutcondition();										
+														},
+							},
+							{ xtype: 'tbspacer', width: 15 },
+							{
+								text : 'Aide opération',
+								handler : function(){
+									if(typeof(thiss.aide)=='undefined'){thiss.aide = Ext.create('SensusKarst.view.main.aidefonctionwin').show();}
+								    else {thiss.aide.show();}
+								}
+							},
+							{ xtype: 'tbfill' },
+					        {
+					            text: 'Calculer',
+					            disabled: true,
+        						formBind: true,
+					            handler: function(){
+					              var config= thiss.formcalcul.getForm().getValues();
+					              if (config.titre == serie.name ){
+										Ext.MessageBox.alert('Problème !', 'Le titre doit être différent !', this.showResult, this);
+								  }
+								  else{
+					            	String.prototype.replaceAll = function (find, replace) {
+									    var str = this;
+									    return str.replace(new RegExp(find.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g'), replace);
+									};
+									var formu = [];
+									var min = [];
+									var max = [];
+									if (condi>0){
+									    for (var i = 0; i < config.formu.length; i++){
+									    	formu[i]= config.formu[i].replaceAll('val','serie.yData[i]')
+									    	if (config.min[i]==''){min[i] = serie.dataMin-1;}
+										    else {min[i] = config.min[i];}
+										    if (config.max[i]==''){max[i] = serie.dataMax+1;}
+										    else {max[i] = config.max[i];}
+									    }
+									}
+					            	var formule = config.formule.replaceAll('val','serie.yData[i]');
+					            	var nouvdata = [];
+					            	var y;
+					            	for (var i = 0; i <serie.yData.length ; i++){
+					            		if (condi>0){
+										    for (var j = 0; j < condi; j++){
+										    	if (serie.yData[i]>=min[j] && serie.yData[i]<=max[j]){
+										    	 y = eval (formu[j]);
+										    	}
+										    }
+										    
+										}
+										else{
+					            			 y = eval (formule);
+										}
+					            		nouvdata.push([serie.xData[i],Number.parseFloat(y.toFixed(config.deci))]);
+					            	}
+					            	if (nouvdata.length>1){
+							        	thiss.ajoutserie(nouvdata,config.axe,config.titre,config.info);
+							        	thiss.formcalcul.destroy(); 
+										thiss.wincalcul.destroy(); 
+							        }
+							        else{
+										Ext.MessageBox.alert('Problème !', 'Problème de calcul', this.showResult, this);
+									}
+					            	
+								  }
+					            }
+					        },
+					        {
+					            text: 'Annuler',
+					            handler: function(){
+					            	thiss.formcalcul.destroy(); 
+				            		thiss.wincalcul.destroy(); 
+					            }
+					        }]
+					        
+					    });
+					 thiss.wincalcul = Ext.create('Ext.window.Window', {
+					        title: 'Créer série calculée à partir de la série : '+serie.name,
+					        closable : false,
+					        layout:'fit',
+					        modal: true,
+					       // width: 750,
+					        items: thiss.formcalcul,
+					      }).show();
+  	
+  },
  
+ 
+ reechantillon:  function (serie) {
+	 				var thiss=this;
+	 				var datedebut = Ext.Date.parse(serie.xData[0], 'time')
+					 var debut =Ext.Date.format(datedebut,'d/m/Y H:i:s');
+					 thiss.formechanti = Ext.create('Ext.form.Panel', {
+					        layout: 'hbox',
+					        bodyPadding: 2,
+					        items:[
+					        	{
+						            xtype: 'fieldset',
+						            title: 'Rééchantillonner les mesures : ',
+						            padding : 3,
+						            margin: 5,
+						            fieldDefaults: {
+						                labelAlign: 'right',
+						                labelWidth: 80,
+						            	},
+				
+						            items: [
+						              { xtype: 'fieldcontainer',
+						            	layout: 'hbox',  
+						            	items: [
+							            	{
+							            	xtype: 'textfield',	
+							                fieldLabel: 'Date début',
+							                name: 'from_date',
+							                value : debut,
+							            	},
+							            	{
+								              	html :'&nbsp;&nbsp;(heure local)'
+								              },
+						            	]
+						              },						              
+						              {
+												            xtype : 'fieldcontainer',
+												            fieldLabel: 'Intervalle entre deux mesures',
+												            labelWidth: 190,
+												            layout: 'hbox',
+												            defaults: {
+												                hideLabel: true,
+												                margin: '0 5 0 0'
+												            },
+												            items: [
+												             	{
+												                xtype: 'numberfield',
+               													minValue: 1,
+												                width: 90,
+												                name : 'interval',
+												                fieldLabel: 'interval',
+												                allowBlank: false
+												           		},
+												            	{
+												                width: 95,
+												                xtype: 'combo',
+												                queryMode: 'local',
+												                value: 'Minutes',
+												                triggerAction: 'all',
+												                forceSelection: true,
+												                editable: false,
+												                fieldLabel: 'unite',
+												                name: 'unite',
+												                displayField: 'name',
+												                valueField: 'value',
+												                store: {
+												                    fields: ['name', 'value'],
+												                    data: [
+												                        {name : 'Secondes',   value: 'Secondes'},
+												                        {name : 'Minutes',  value: 'Minutes'},
+												                        {name : 'Heures', value: 'Heures'}
+												                    ]}
+												            	    }
+												                ]
+												         
+												    },
+												    {
+												                xtype: 'numberfield',
+               													minValue: 0,
+												                labelWidth : 160,
+												                width: 230,
+												                name : 'deci',
+												                fieldLabel: 'Nombre de décimales',
+												                allowBlank: false
+												     		},
+												    {
+													 xtype: 'textfield',
+													 margin : '20 0 5 0',
+													 labelWidth : 160,
+													 
+													 fieldLabel: 'Titre de la nouvelle série',													               
+													 name : 'titre',
+													 allowBlank : false,
+													 value : serie.name
+													 },
+													 {
+													 xtype: 'textarea',
+													 labelWidth : 160,
+													 fieldLabel: 'Infos de la nouvelle série',
+													 name : 'info',
+													 height : 80,
+													 value : serie.userOptions.info
+													 },
+						           ]
+						        
+						        },					        	
+					        ],
+					        buttons: [
+					        {
+					            text: 'Rééchantillonner',
+					            disabled: true,
+        						formBind: true,
+					            handler: function(){
+					            	var config= thiss.formechanti.getForm().getValues()
+					            	var intervalle = config.interval;
+									            		if(config.unite == 'Minutes' ){intervalle = config.interval*60;}
+									            		else if(config.unite == 'Heures' ){intervalle = config.interval*3600;}
+									intervalle = intervalle*1000;  
+					            	var origine = Ext.Date.parse(config.from_date, 'd/m/Y H:i:s');
+							        		if(origine < datedebut){
+							        			Ext.MessageBox.alert('Problème !', 'la date de début n\'est pas valide', this.showResult, this);
+							        		}
+							        		else if (config.titre == serie.name ){
+											 	Ext.MessageBox.alert('Problème !', 'Le titre doit être différent !', this.showResult, this);
+											 }
+							        		else {
+							         	
+					            					Ext.Msg.confirm("Confirmation",
+							            					"Etes-vous sûr de vouloir Rééchantillonner  la série "+serie.name+" ?",
+							            					function(id) {
+							            						if (id === 'yes') {
+												            		var x1 = 0;
+												            		var x2 = 0;
+												            		var y1 = 0;
+												            		var y2 = 0;
+												            		var xb = Number(Ext.Date.format(origine,'time'));
+												            		var yb = 0;
+												            		var pas = serie.xData[1]-serie.xData[0];
+												            		var nouvdata = [];
+												            		for (var i = 0; i < serie.xData.length-1; i++){
+												            			x1 = serie.xData[i];y1 = serie.yData[i];
+												            			x2 = serie.xData[i+1];y2 = serie.yData[i+1];
+												            			if ((x2-x1)>3*pas){
+												            				while (xb<x2){
+												            					xb = xb + intervalle;
+												            				}
+												            			}
+												            			else {
+													            			while (xb<x2){
+													            				yb = ((y2-y1)*xb + (y1*x2-y2*x1))/(x2-x1);
+													            				nouvdata.push([xb,Number.parseFloat(yb.toFixed(config.deci))]); 
+													            				xb = xb + intervalle;
+													            			}
+												            			}	
+												            		}
+												            		
+							            							if (nouvdata.length>1){
+							            								thiss.ajoutserie(nouvdata,serie.yAxis.userOptions.id,config.titre,config.info);
+							            							}
+							            							else{
+																	 		Ext.MessageBox.alert('Problème !', 'Problème de calcul', this.showResult, this);
+																	 	}
+							            							
+							            							
+													            }
+												            		thiss.formechanti.destroy(); 
+												            		thiss.winechanti.destroy(); 
+							            						}
+							            					);
+							        		}				
+							         
+					            	
+					            }
+					        },
+					        {
+					            text: 'Annuler',
+					            handler: function(){
+					            	thiss.formechanti.destroy(); 
+				            		thiss.winechanti.destroy(); 
+					            }
+					        }]
+					        
+					    });
+					 thiss.winechanti = Ext.create('Ext.window.Window', {
+					        title: 'Rééchantillonner la série '+serie.name,
+					        closable : false,
+					        layout: 'fit',
+					        modal: true,
+					        items: thiss.formechanti,
+					      }).show();
+	 
+	 
+ },
  
  tronque:  function (serie) {
 	 var thiss=this;
@@ -1252,6 +1671,9 @@ Ext.define('SensusKarst.view.main.graphcontrole', {
 												}
 							            	}
 						            	]
+						              },
+						              {
+						              	html : ' &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(heure local)'
 						              },
 						           ]
 						        
@@ -1520,7 +1942,12 @@ Ext.define('SensusKarst.view.main.graphcontrole', {
 	                        datefield.setValue(maxx);
 	                                }
 	                        }
-	            }]
+	            },
+						              {
+						              	xtype: 'displayfield',
+						              	value: ' &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(heure local)'
+						              },
+	            ]
 	        };
 	 arr.push(obj);	
 	 

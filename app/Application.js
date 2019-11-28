@@ -27,7 +27,7 @@ Ext.define('SensusKarst.Application', {
     ],
 
     launch: function () {
-    	
+    	 Ext.util.Format.decimalSeparator = '.';
     },
 
     onAppUpdate: function () {
