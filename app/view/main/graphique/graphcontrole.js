@@ -184,7 +184,7 @@ Ext.define('SensusKarst.view.main.graphcontrole', {
  									  var exten = file.split('.');
 									  var nomfich1 = exten[0].split('\\');
 									  var nomfich = nomfich1[nomfich1.length-1];
-									  if (exten[1]=='ppb'){
+									  if (exten[exten.length-1]=='ppb'){
 									  	 me.gestionppb(file);
 									    }
 									  else {

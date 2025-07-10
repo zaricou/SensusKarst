@@ -6,6 +6,8 @@
   "scripts": {
     "start": "electron .",
     "package": "electron-packager ./ SensusKarst --all --out ./dist --icon=app --overwrite --prune=true",
+    "pack32":"electron-packager ./ SensusKarst --platform=win32 --arch=ia32 --out ./dist --icon=app --overwrite --prune=true",
+    "install32": "node build32.js",
     "build:package": "electron-packager ./ SensusKarst --platform=win32 --arch=x64 --out ./dist --icon=app --overwrite --prune=true",
     "build:winstaller": "node build.js",
     "setup": "npm run build:package && npm run build:winstaller",
